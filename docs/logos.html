@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantum Ready — logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .pick { padding-block: var(--space-6); }
+  .options { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:var(--space-4); }
+  .option { display:flex; flex-direction:column; gap:var(--space-3); }
+  .stage {
+    display:grid; place-items:center; min-height:190px; border-radius:var(--radius-lg);
+    background:linear-gradient(135deg,var(--muted),var(--card));
+    border:1px solid var(--border);
+  }
+  .stage svg { width:104px; height:104px; }
+  .sizes { display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap; padding:var(--space-3);
+           background:var(--bg-alt); border:1px solid var(--border); border-radius:var(--radius); }
+  .sizes .s64 svg{width:52px;height:52px} .sizes .s32 svg{width:30px;height:30px}
+  .sizes .s16 svg{width:17px;height:17px}
+  .sizes span.cap{font-size:.68rem;color:var(--muted-fg);display:block;text-align:center;margin-top:4px}
+  .lockup { display:flex; align-items:center; gap:.65rem; font-weight:800; font-size:1.18rem;
+            letter-spacing:-.022em; }
+  .lockup svg { width:34px; height:34px; flex:none; }
+  .onDark { background:#0b1220; color:#e8eefc; border-radius:var(--radius); padding:var(--space-3);
+            display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap; }
+  .name { display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-2); }
+  .name h2 { margin:0; font-size:1.14rem; font-weight:700; letter-spacing:-.012em; }
+  .num { font-size:.72rem; font-weight:800; letter-spacing:.08em; color:var(--on-primary);
+         background:var(--primary); padding:.2rem .55rem; border-radius:var(--radius-pill); }
+  .why { font-size:.88rem; color:var(--muted-fg); margin:0; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#mark-1"/></svg>
+      Quantum Ready
+    </a>
+    <div class="nav-links"><a href="index.html">Back to site</a></div>
+    <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== every mark defined once, reused at each size ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="gWarm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#c2410c"/>
+    </linearGradient>
+    <linearGradient id="gDeep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1 — Lattice Shield: protection built from a lattice, the maths ML-KEM rests on -->
+  <symbol id="mark-1" viewBox="0 0 64 64">
+    <path d="M32 4 8 13v17c0 13.5 10 22.8 24 26 14-3.2 24-12.5 24-26V13Z" fill="url(#gBlue)"/>
+    <g stroke="#fff" stroke-width="1.5" opacity=".55" fill="none">
+      <path d="M32 17 20 24v14l12 7 12-7V24Z"/><path d="M32 17v28M20 24l24 14M44 24 20 38"/>
+    </g>
+    <g fill="#fff">
+      <circle cx="32" cy="17" r="3"/><circle cx="20" cy="24" r="2.6"/><circle cx="44" cy="24" r="2.6"/>
+      <circle cx="20" cy="38" r="2.6"/><circle cx="44" cy="38" r="2.6"/><circle cx="32" cy="45" r="3"/>
+      <circle cx="32" cy="31" r="3.4"/>
+    </g>
+  </symbol>
+
+  <!-- 2 — Orbit Q: the letterform doubles as an electron orbit -->
+  <symbol id="mark-2" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="19" fill="none" stroke="url(#gBlue)" stroke-width="6"/>
+    <path d="M38 38 52 52" stroke="url(#gBlue)" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="32" cy="32" rx="29" ry="11" fill="none" stroke="#c2410c" stroke-width="2.4"
+             transform="rotate(-35 32 32)" opacity=".85"/>
+    <circle cx="55" cy="19" r="4" fill="#c2410c"/>
+  </symbol>
+
+  <!-- 3 — Quantum Lock: a padlock whose shackle is a probability wave -->
+  <symbol id="mark-3" viewBox="0 0 64 64">
+    <path d="M18 28v-6a14 14 0 0 1 28 0v6" fill="none" stroke="url(#gBlue)" stroke-width="5" stroke-linecap="round"/>
+    <rect x="12" y="28" width="40" height="30" rx="7" fill="url(#gBlue)"/>
+    <g fill="#fff" opacity=".92">
+      <circle cx="24" cy="38" r="2.4"/><circle cx="32" cy="38" r="2.4"/><circle cx="40" cy="38" r="2.4"/>
+      <circle cx="24" cy="48" r="2.4"/><circle cx="32" cy="48" r="2.4"/><circle cx="40" cy="48" r="2.4"/>
+    </g>
+    <g stroke="#fff" stroke-width="1.3" opacity=".45">
+      <path d="M24 38h16M24 48h16M24 38v10M32 38v10M40 38v10"/>
+    </g>
+  </symbol>
+
+  <!-- 4 — Hex Cell: a single lattice cell, verified -->
+  <symbol id="mark-4" viewBox="0 0 64 64">
+    <path d="M32 4 56 18v28L32 60 8 46V18Z" fill="none" stroke="url(#gBlue)" stroke-width="4.5" stroke-linejoin="round"/>
+    <path d="M32 14 47 23v18l-15 9-15-9V23Z" fill="url(#gBlue)" opacity=".14"/>
+    <path d="m22 32 7 7 14-14" fill="none" stroke="#c2410c" stroke-width="5.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- 5 — Countdown Shield: the deadline is the product -->
+  <symbol id="mark-5" viewBox="0 0 64 64">
+    <path d="M32 4 8 13v17c0 13.5 10 22.8 24 26 14-3.2 24-12.5 24-26V13Z"
+          fill="none" stroke="url(#gBlue)" stroke-width="4.5" stroke-linejoin="round"/>
+    <circle cx="32" cy="30" r="14" fill="none" stroke="var(--border)" stroke-width="3.5"/>
+    <path d="M32 16a14 14 0 0 1 12.1 21" fill="none" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M32 22v9l6 4" fill="none" stroke="url(#gBlue)" stroke-width="3.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- 6 — Wave Collapse: recorded signal resolving into readable data -->
+  <symbol id="mark-6" viewBox="0 0 64 64">
+    <path d="M4 32c6-18 10-18 16 0s10 18 16 0" fill="none" stroke="url(#gBlue)"
+          stroke-width="4.5" stroke-linecap="round"/>
+    <g fill="#c2410c">
+      <rect x="40" y="22" width="5" height="20" rx="2.5"/>
+      <rect x="49" y="16" width="5" height="32" rx="2.5"/>
+      <rect x="58" y="26" width="5" height="12" rx="2.5"/>
+    </g>
+  </symbol>
+
+  <!-- 7 — QR Monogram: geometric, works small -->
+  <symbol id="mark-7" viewBox="0 0 64 64">
+    <rect x="5" y="5" width="54" height="54" rx="15" fill="url(#gWarm)"/>
+    <circle cx="27" cy="29" r="11" fill="none" stroke="#fff" stroke-width="4.5"/>
+    <path d="M31 37 40 46" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Stem, bowl, and the diagonal leg that makes it an R rather than a P. -->
+    <path d="M40 18v28M40 18h7a7 7 0 0 1 0 13h-7m6 0 8 15" fill="none" stroke="#fff"
+          stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- 8 — Aperture: superposed states resolving to one -->
+  <symbol id="mark-8" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="27" fill="none" stroke="url(#gDeep)" stroke-width="4"/>
+    <g stroke="url(#gDeep)" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M32 5v18M51.1 12.9 38.4 25.6M59 32H41M51.1 51.1 38.4 38.4"/>
+    </g>
+    <g stroke="#c2410c" stroke-width="4" stroke-linecap="round" fill="none" opacity=".9">
+      <path d="M32 59V41M12.9 51.1 25.6 38.4M5 32h18M12.9 12.9 25.6 25.6"/>
+    </g>
+    <circle cx="32" cy="32" r="7" fill="#c2410c"/>
+  </symbol>
+</svg>
+
+<main class="container pick">
+  <header style="margin-bottom:var(--space-6)">
+    <span class="eyebrow">Brand</span>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.8rem)">Eight marks. Pick one.</h1>
+    <p class="lede">
+      Each is shown large, at 32px and 16px (where most logos die), in a wordmark
+      lockup, and reversed on dark. Toggle the theme in the nav to check both.
+      Tell me a number and I will apply it across the site, the favicon and the
+      report header.
+    </p>
+  </header>
+
+  <div class="options" id="options"></div>
+
+  <div class="card" style="margin-top:var(--space-6)">
+    <h2 style="font-size:1.14rem">How to choose</h2>
+    <p class="muted" style="font-size:.93rem">
+      Ignore which looks nicest at 104px — every one of them does. Judge them at
+      16px in the row above, because that is the size a browser tab, a LinkedIn
+      avatar and a report footer will actually render. A mark that turns to mush
+      there will quietly undermine you in every context that matters.
+    </p>
+    <p class="muted" style="font-size:.93rem;margin-bottom:0">
+      Second test: does it still read when someone has never heard of
+      post-quantum cryptography? <strong>1</strong>, <strong>3</strong> and
+      <strong>5</strong> say "security" instantly. <strong>2</strong>,
+      <strong>6</strong> and <strong>8</strong> say "quantum" first and security
+      second. <strong>4</strong> and <strong>7</strong> are the most neutral and
+      the most scalable if the company later sells more than this one service.
+    </p>
+  </div>
+</main>
+
+<script>
+const MARKS = [
+  ["Lattice Shield", "Protection built out of a lattice — the exact structure ML-KEM's security rests on. The most literal and the most defensible in a pitch."],
+  ["Orbit Q", "The letterform is the orbit. Reads as 'Q' and 'quantum' simultaneously, with the orange electron as the accent."],
+  ["Quantum Lock", "A padlock whose shackle is a probability wave, body filled with lattice nodes. Familiar silhouette, unfamiliar detail."],
+  ["Hex Cell", "One lattice cell, verified. Geometric, calm, and the easiest of the set to animate or use as a repeating pattern."],
+  ["Countdown Shield", "A shield wrapped around a clock. Sells urgency rather than technology — arguably what actually closes the deal."],
+  ["Wave Collapse", "A recorded signal collapsing into readable bars. Harvest-now-decrypt-later drawn in one gesture."],
+  ["QR Monogram", "Q and R in a rounded tile. The most conventional SaaS mark here, and the one that survives smallest."],
+  ["Aperture", "Superposed states resolving to a single point. Abstract, distinctive, no security cliché anywhere in it."]
+];
+
+document.getElementById("options").innerHTML = MARKS.map((m, i) => {
+  const id = "#mark-" + (i + 1);
+  const svg = s => `<svg viewBox="0 0 64 64" aria-hidden="true"><use href="${id}"/></svg>`;
+  return `
+  <article class="option">
+    <div class="stage">${svg()}</div>
+    <div class="name"><h2>${m[0]}</h2><span class="num">${i + 1}</span></div>
+    <p class="why">${m[1]}</p>
+    <div class="sizes">
+      <div class="s64">${svg()}<span class="cap">52px</span></div>
+      <div class="s32">${svg()}<span class="cap">30px</span></div>
+      <div class="s16">${svg()}<span class="cap">17px</span></div>
+      <div class="lockup">${svg()}<span>Quantum Ready</span></div>
+    </div>
+    <div class="onDark">
+      <div class="lockup">${svg()}<span>Quantum Ready</span></div>
+      <div class="s16">${svg()}</div>
+    </div>
+  </article>`;
+}).join("");
+
+// Theme toggle, matching the main site.
+const root = document.documentElement;
+document.getElementById("themeToggle").addEventListener("click", () => {
+  root.setAttribute("data-theme", root.getAttribute("data-theme") === "light" ? "dark" : "light");
+});
+</script>
+</body>
+</html>

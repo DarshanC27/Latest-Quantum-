@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quantum Ready — the clock is already running</title>
+<meta name="description" content="Adversaries are recording your encrypted traffic today to decrypt it once quantum computers arrive. Quantum Ready measures exactly what is exposed.">
+<meta name="theme-color" content="#05070f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M4 32c6-18 10-18 16 0s10 18 16 0' fill='none' stroke='%2360a5fa' stroke-width='7' stroke-linecap='round'/%3E%3Cg fill='%23fb923c'%3E%3Crect x='40' y='22' width='5' height='20' rx='2.5'/%3E%3Crect x='49' y='16' width='5' height='32' rx='2.5'/%3E%3Crect x='58' y='26' width='5' height='12' rx='2.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   QUANTUM READY — immersive build
+   One file. No framework, no build step, no network beyond the font.
+   The 3D is a hand-written renderer; the "quantum computer" is a
+   dilution refrigerator, which is what the machine actually looks like.
+   ══════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#05070f; --deep:#0a0f1e; --panel:#111a2e;
+  /* --faint carries real body copy (field hints, footer links, stat labels),
+     so it has to clear 4.5:1 on the lightest surface it lands on, not just
+     on --void. #7b8db4 is 5.21:1 on --panel and 6.05:1 on --void. */
+  --ink:#eef3ff; --dim:#93a4c8; --faint:#7b8db4;
+  --blue:#60a5fa; --cyan:#22d3ee; --gold:#f0c75e; --amber:#fb923c;
+  --danger:#fb7185; --good:#4ade80; --line:rgba(147,164,200,.16);
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--ink);overflow-x:hidden;
+  font-family:"Plus Jakarta Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--blue);color:var(--void)}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:6px}
+
+/* ── loader ─────────────────────────────────────────────────── */
+#boot{position:fixed;inset:0;z-index:999;background:var(--void);
+  display:grid;place-items:center;transition:opacity .8s ease,visibility .8s}
+#boot.gone{opacity:0;visibility:hidden;pointer-events:none}
+#boot .inner{text-align:center;width:min(80vw,380px)}
+#boot .pct{font-family:var(--mono);font-size:3.4rem;font-weight:700;letter-spacing:-.04em;
+  color:var(--blue);line-height:1}
+#boot .lbl{font-family:var(--mono);font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--faint);margin-top:.8rem;min-height:1.2em}
+#boot .track{height:2px;background:rgba(96,165,250,.16);margin-top:1.6rem;overflow:hidden}
+#boot .fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+
+/* ── ambient layers ─────────────────────────────────────────── */
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* No filter:blur() here on purpose. A blur over a fixed, full-viewport
+   layer is re-rasterised every frame the canvases beneath it animate,
+   and it cost ~50fps on its own. These are radial gradients already —
+   the soft stops give the same bloom for free. */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.85;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;will-change:transform;
+  animation:float 26s ease-in-out infinite alternate}
+.a1{width:76vw;height:76vw;top:-26%;left:-22%;background:radial-gradient(circle closest-side,
+  rgba(96,165,250,.30),rgba(96,165,250,.13) 42%,rgba(96,165,250,.04) 68%,transparent 82%)}
+.a2{width:66vw;height:66vw;top:26%;right:-24%;animation-delay:-9s;background:radial-gradient(circle closest-side,
+  rgba(34,211,238,.22),rgba(34,211,238,.09) 44%,rgba(34,211,238,.03) 70%,transparent 84%)}
+.a3{width:60vw;height:60vw;bottom:-24%;left:28%;animation-delay:-17s;background:radial-gradient(circle closest-side,
+  rgba(251,146,60,.20),rgba(251,146,60,.08) 44%,rgba(251,146,60,.02) 70%,transparent 84%)}
+@keyframes float{to{transform:translate3d(5vw,-4vh,0) scale(1.14)}}
+#cursor{position:fixed;width:340px;height:340px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(96,165,250,.11),transparent 65%);
+  transform:translate(-50%,-50%);transition:opacity .3s;opacity:0}
+
+/* ── shell ──────────────────────────────────────────────────── */
+.wrap{position:relative;z-index:2}
+.container{width:100%;max-width:1180px;margin-inline:auto;padding-inline:clamp(1rem,4vw,2.4rem)}
+section{padding-block:clamp(4.5rem,11vh,9rem);position:relative}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:70px;
+  background:rgba(5,7,15,.72);backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--line)}
+nav .container{height:100%;display:flex;align-items:center;gap:2rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em;
+  font-size:1.04rem;margin-right:auto}
+.brand svg{width:30px;height:30px;flex:none}
+.navlinks{display:flex;gap:1.8rem}
+.navlinks a{font-size:.88rem;font-weight:600;color:var(--dim);transition:color .2s;position:relative;
+  display:inline-flex;align-items:center;min-height:24px;padding-block:.3rem}
+.navlinks a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:1.5px;
+  background:var(--cyan);transition:right .3s cubic-bezier(.2,1,.3,1)}
+.navlinks a:hover{color:var(--ink)}
+.navlinks a:hover::after{right:0}
+#burger{display:none;width:44px;height:44px;background:none;border:1px solid var(--line);
+  border-radius:9px;color:var(--ink);cursor:pointer;align-items:center;justify-content:center}
+
+/* ── buttons ────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;min-height:52px;
+  padding:.9rem 1.9rem;border:0;border-radius:100px;font:inherit;font-weight:700;font-size:.94rem;
+  cursor:pointer;position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.2,1,.3,1),box-shadow .3s}
+.btn-main{background:linear-gradient(120deg,var(--blue),var(--cyan));color:#04121f;
+  box-shadow:0 8px 34px rgba(96,165,250,.34)}
+.btn-main:hover{box-shadow:0 14px 48px rgba(96,165,250,.5)}
+.btn-line{background:rgba(255,255,255,.03);color:var(--ink);border:1px solid var(--line)}
+.btn-line:hover{border-color:var(--cyan);background:rgba(34,211,238,.08)}
+.btn svg{width:17px;height:17px}
+.btnrow{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.2rem}
+
+/* ── type ───────────────────────────────────────────────────── */
+.chip{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);
+  border:1px solid rgba(34,211,238,.32);background:rgba(34,211,238,.07);
+  padding:.42rem 1rem;border-radius:100px;margin-bottom:1.6rem}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,211,238,.6)}50%{opacity:.5;box-shadow:0 0 0 7px rgba(34,211,238,0)}}
+
+h1{font-size:clamp(2.6rem,7.4vw,6.2rem);font-weight:800;line-height:.94;letter-spacing:-.045em}
+h2{font-size:clamp(1.9rem,4.6vw,3.4rem);font-weight:800;line-height:1.02;letter-spacing:-.035em;margin-bottom:.6em}
+h3{font-size:1.16rem;font-weight:700;letter-spacing:-.015em;margin-bottom:.5rem}
+.grad{background:linear-gradient(100deg,var(--blue) 8%,var(--cyan) 46%,var(--amber) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(1rem,1.7vw,1.2rem);color:var(--dim);max-width:56ch;line-height:1.72}
+.mono{font-family:var(--mono)}
+
+/* ── hero ───────────────────────────────────────────────────── */
+.hero{min-height:100svh;display:grid;align-items:center;padding-top:70px}
+.hero .container{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
+#rig{width:100%;aspect-ratio:1/1.14;max-height:78vh;display:block}
+.rigwrap{position:relative}
+.rigwrap::after{content:"";position:absolute;inset:14% 14% 4%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 62%,rgba(240,199,94,.16),transparent 62%);
+  filter:blur(34px);pointer-events:none;z-index:-1}
+.rig-cap{position:absolute;left:0;bottom:-4px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1.2rem;
+  margin-top:3rem;padding-top:1.8rem;border-top:1px solid var(--line)}
+.stat .n{font-family:var(--mono);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;
+  letter-spacing:-.03em;color:var(--blue);line-height:1}
+.stat .l{font-size:.76rem;color:var(--faint);margin-top:.4rem;line-height:1.4}
+
+/* ── reveal ─────────────────────────────────────────────────── */
+.rv{opacity:0;transform:translateY(26px)}
+.rv.in{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.2,1,.3,1),transform .8s cubic-bezier(.2,1,.3,1);transition-delay:var(--d,0ms)}
+
+/* ── cards ──────────────────────────────────────────────────── */
+.grid{display:grid;gap:1.2rem}
+.g3{grid-template-columns:repeat(auto-fit,minmax(266px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  border:1px solid var(--line);border-radius:18px;padding:1.8rem;position:relative;overflow:hidden;
+  transition:transform .4s cubic-bezier(.2,1,.3,1),border-color .4s}
+.card:hover{transform:translateY(-6px);border-color:rgba(34,211,238,.4)}
+.card::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .4s;
+  background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),rgba(34,211,238,.09),transparent 42%)}
+.card:hover::before{opacity:1}
+.card p{color:var(--dim);font-size:.95rem}
+.ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:1.1rem;
+  background:linear-gradient(140deg,rgba(96,165,250,.2),rgba(34,211,238,.08));color:var(--cyan)}
+.ico svg{width:23px;height:23px}
+
+/* ── bit-decay visual ───────────────────────────────────────── */
+.decay{display:grid;gap:.75rem}
+.algo{display:grid;grid-template-columns:150px 1fr 84px;gap:1rem;align-items:center;
+  padding:.85rem 1.1rem;background:rgba(255,255,255,.028);border:1px solid var(--line);border-radius:12px}
+.algo .nm{font-family:var(--mono);font-size:.86rem;font-weight:700}
+.algo .nm small{display:block;font-weight:400;font-size:.66rem;color:var(--faint);letter-spacing:.04em}
+.bits{display:flex;gap:2px;flex-wrap:wrap}
+.bit{width:8px;height:17px;border-radius:2px;background:var(--blue);
+  transition:background .5s,opacity .5s,transform .5s}
+.bit.dead{background:rgba(251,113,133,.2);transform:scaleY(.28)}
+.algo .vl{font-family:var(--mono);font-size:.82rem;font-weight:700;text-align:right}
+.algo .vl.zero{color:var(--danger)}
+.algo .vl.safe{color:var(--good)}
+
+/* ── mosca ──────────────────────────────────────────────────── */
+.mosca{display:grid;grid-template-columns:1fr 1fr;gap:2.4rem;align-items:start}
+.panel{background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  border:1px solid var(--line);border-radius:20px;padding:1.9rem}
+.fld{margin-bottom:1.5rem}
+.fld label{display:flex;justify-content:space-between;font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+.fld .v{font-family:var(--mono);color:var(--cyan)}
+.fld .h{font-size:.79rem;color:var(--faint);margin-bottom:.55rem;line-height:1.5}
+input[type=range]{width:100%;height:44px;accent-color:var(--cyan);background:none;cursor:pointer}
+select{width:100%;min-height:48px;padding:.7rem .9rem;background:rgba(5,7,15,.8);color:var(--ink);
+  border:1px solid var(--line);border-radius:11px;font:inherit;font-size:.92rem}
+.verdict{border:1px solid var(--line);border-left:4px solid var(--danger);border-radius:0 16px 16px 0;
+  padding:1.6rem;background:rgba(251,113,133,.06);transition:border-color .4s,background .4s}
+.verdict.ok{border-left-color:var(--good);background:rgba(74,222,128,.06)}
+.vhead{font-family:var(--mono);font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--danger);font-weight:700;margin-bottom:.7rem}
+.verdict.ok .vhead{color:var(--good)}
+.formula{font-family:var(--mono);font-size:1.06rem;font-weight:700;padding:.9rem 1rem;
+  background:rgba(5,7,15,.62);border-radius:11px;margin-bottom:1rem;overflow-x:auto;white-space:nowrap}
+.verdict p{font-size:.92rem;color:var(--dim);margin:0}
+
+/* ── timeline ───────────────────────────────────────────────── */
+.rail{position:relative;padding-left:2.6rem}
+.rail::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(180deg,var(--blue),var(--cyan),var(--amber))}
+.stop{position:relative;padding-bottom:2.4rem}
+.stop::before{content:"";position:absolute;left:-2.6rem;top:5px;width:20px;height:20px;border-radius:50%;
+  border:2px solid var(--cyan);background:var(--void);box-shadow:0 0 0 5px rgba(34,211,238,.1)}
+.stop .yr{font-family:var(--mono);font-size:1.7rem;font-weight:700;color:var(--cyan);line-height:1}
+.stop p{color:var(--dim);font-size:.94rem;max-width:60ch;margin-top:.4rem}
+
+/* ── team ───────────────────────────────────────────────────── */
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.4rem}
+.who{text-align:center;padding:2rem 1.2rem}
+.face{width:96px;height:96px;border-radius:50%;margin:0 auto 1rem;position:relative;overflow:hidden;
+  display:grid;place-items:center;font-size:1.9rem;font-weight:800;color:#04121f;
+  background:linear-gradient(140deg,var(--blue),var(--cyan));
+  box-shadow:0 0 0 1px var(--line),0 12px 34px rgba(0,0,0,.5)}
+.who:nth-child(2) .face{background:linear-gradient(140deg,#818cf8,#6366f1)}
+.who:nth-child(3) .face{background:linear-gradient(140deg,var(--amber),#f472b6)}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.who .role{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cyan);margin:.2rem 0 .8rem}
+.who a{font-size:.86rem;color:var(--dim);display:inline-flex;gap:.4rem;align-items:center;min-height:44px}
+.who a:hover{color:var(--cyan)}
+.who a svg{width:16px;height:16px}
+
+/* ── contact ────────────────────────────────────────────────── */
+.form{display:grid;gap:1rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+label.fl{display:block;font-size:.82rem;font-weight:700;margin-bottom:.35rem}
+input[type=text],input[type=email],textarea{width:100%;min-height:50px;padding:.8rem 1rem;
+  background:rgba(5,7,15,.66);border:1px solid var(--line);border-radius:11px;color:var(--ink);
+  font:inherit;font-size:.94rem}
+textarea{min-height:118px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+.req{color:var(--danger)}
+.note{font-size:.82rem;color:var(--faint)}
+
+footer{border-top:1px solid var(--line);padding:2.6rem 0 3.4rem;color:var(--faint);font-size:.87rem}
+.fgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
+.fgrid h3{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.9rem}
+.fgrid a{display:block;padding:.22rem 0;color:var(--faint)}
+.fgrid a:hover{color:var(--cyan)}
+
+@media (max-width:940px){
+  .hero .container,.mosca{grid-template-columns:1fr}
+  .rigwrap{order:-1;max-width:420px;margin-inline:auto;margin-bottom:1.4rem}
+  #rig{max-height:52vh}
+  .rig-cap{font-size:.55rem;letter-spacing:.13em}
+  .fgrid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  .navlinks{position:fixed;inset:70px 0 auto;flex-direction:column;gap:0;padding:1rem;
+    background:rgba(5,7,15,.98);border-bottom:1px solid var(--line);display:none}
+  .navlinks.open{display:flex}
+  .navlinks a{padding:.9rem;min-height:44px;display:flex;align-items:center}
+  #burger{display:flex}
+  nav .btn{display:none}
+  .row2,.fgrid{grid-template-columns:1fr}
+  .algo{grid-template-columns:110px 1fr 66px;gap:.7rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+  .aurora i{animation:none}
+  #cursor{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ loader ═══ -->
+<div id="boot"><div class="inner">
+  <div class="pct" id="bootPct">0</div>
+  <div class="lbl" id="bootLbl">initialising</div>
+  <div class="track"><div class="fill" id="bootFill"></div></div>
+</div></div>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div id="cursor" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<nav>
+  <div class="container">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M4 32c6-18 10-18 16 0s10 18 16 0" fill="none" stroke="var(--blue)" stroke-width="5.5" stroke-linecap="round"/>
+        <g fill="var(--amber)"><rect x="40" y="22" width="5" height="20" rx="2.5"/>
+        <rect x="49" y="16" width="5" height="32" rx="2.5"/><rect x="58" y="26" width="5" height="12" rx="2.5"/></g>
+      </svg>
+      Quantum Ready
+    </a>
+    <div class="navlinks" id="nl">
+      <a href="#threat">Threat</a><a href="#deadline">Deadline</a>
+      <a href="#scan">Scan</a><a href="#team">Team</a><a href="#contact">Contact</a>
+    </div>
+    <button id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nl">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="btn btn-main" href="#contact">Free scan</a>
+  </div>
+</nav>
+
+<!-- ═══ hero ═══ -->
+<section class="hero" id="top">
+  <div class="container">
+    <div>
+      <span class="chip"><span class="dot"></span>Harvest now · decrypt later</span>
+      <h1>Encrypted today.<br><span class="grad" data-scramble>Readable tomorrow.</span></h1>
+      <p class="lede" style="margin-top:1.5rem">
+        Somewhere, your encrypted traffic is being written to disk — not to be
+        broken now, but to be opened the day a quantum computer can. Every
+        algorithm guarding it falls to one piece of mathematics.
+        <strong style="color:var(--ink)">Not weakened. Broken.</strong>
+      </p>
+      <div class="btnrow">
+        <a class="btn btn-main magnet" href="#contact">
+          Scan my estate
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-7 7 7-7 7"/></svg>
+        </a>
+        <a class="btn btn-line magnet" href="#deadline">Calculate my deadline</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n" data-to="0" data-suffix=" bits">0</div>
+          <div class="l">RSA security against a quantum computer, at any key size</div></div>
+        <div class="stat"><div class="n" data-to="2035" data-from="2020">2035</div>
+          <div class="l">NCSC deadline for completed migration</div></div>
+        <div class="stat"><div class="n" data-to="2028" data-from="2020">2028</div>
+          <div class="l">Deadline for a full cryptographic inventory</div></div>
+        <div class="stat"><div class="n">Now</div>
+          <div class="l">When the recording that breaks you begins</div></div>
+      </div>
+    </div>
+
+    <div class="rigwrap">
+      <canvas id="rig" aria-label="Rotating three-dimensional model of a dilution refrigerator, the cryogenic assembly a superconducting quantum computer is housed in"></canvas>
+      <span class="rig-cap">Fig. 01 — dilution refrigerator · 6 stages · 15 mK</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ threat ═══ -->
+<section id="threat">
+  <div class="container">
+    <span class="chip rv">The mechanics</span>
+    <h2 class="rv">Two algorithms.<br>Very different problems.</h2>
+    <p class="lede rv" style="margin-bottom:2.6rem">Most coverage of this is vague.
+      The real picture is specific, and the difference decides what you have to do.</p>
+
+    <div class="grid g3">
+      <div class="card rv tilt">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.2-2.4"/></svg></div>
+        <h3>Shor's algorithm</h3>
+        <p>Solves factorisation and discrete logarithms in polynomial time — precisely
+          what RSA, DSA, Diffie-Hellman, ECDSA and Ed25519 all rest on. Their security
+          isn't reduced against a quantum computer. It's <strong style="color:var(--danger)">eliminated</strong>.</p>
+      </div>
+      <div class="card rv tilt" style="--d:90ms">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M11 3 4 14h7l-1 7 7-11h-7Z"/></svg></div>
+        <h3>Grover's algorithm</h3>
+        <p>A quadratic speed-up on search, halving symmetric strength. AES-128 drops to
+          about 64 bits and has to go; AES-256 drops to 128 and
+          <strong style="color:var(--good)">holds</strong>. This half is a configuration
+          change, not a programme.</p>
+      </div>
+      <div class="card rv tilt" style="--d:180ms">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6.6V12l4 2.4"/></svg></div>
+        <h3>The consequence</h3>
+        <p>Because traffic can be recorded now and read later, your exposure isn't set by
+          when the machine arrives. It's set by how long your data must stay secret — and
+          for patient records or pension files, that window opened years ago.</p>
+      </div>
+    </div>
+
+    <div class="card rv" style="margin-top:2.4rem;border-color:rgba(251,113,133,.3)">
+      <h3 style="color:var(--danger)">The thing most vendors get wrong</h3>
+      <p style="font-size:1.02rem"><strong style="color:var(--ink)">A bigger key does not help.</strong>
+        RSA-15360 falls to the same algorithm as RSA-2048 — it simply takes marginally
+        longer. Migration means replacing the mathematics, not resizing it. Anyone
+        advising you to "increase key length" for quantum readiness has misunderstood
+        the threat.</p>
+    </div>
+
+    <h3 class="rv" style="margin:3.4rem 0 .4rem;font-size:1.3rem">Watch the security drain</h3>
+    <p class="rv" style="color:var(--dim);font-size:.94rem;margin-bottom:1.6rem">
+      Each bar is 8 bits of strength. Blue survives a quantum computer; red doesn't.</p>
+    <div class="decay" id="decay"></div>
+  </div>
+</section>
+
+<!-- ═══ deadline ═══ -->
+<section id="deadline">
+  <div class="container">
+    <span class="chip rv">Mosca's inequality</span>
+    <h2 class="rv">Find out if you're already late</h2>
+    <p class="lede rv" style="margin-bottom:2.6rem">
+      If the time your data must stay secret <strong style="color:var(--cyan)">(X)</strong>
+      plus the time migration takes <strong style="color:var(--cyan)">(Y)</strong> exceeds
+      the time until quantum computers break your cryptography
+      <strong style="color:var(--cyan)">(Z)</strong> — then what you're protecting today
+      is still sensitive when it becomes readable.</p>
+
+    <div class="mosca">
+      <form class="panel rv" id="calc" novalidate>
+        <div class="fld">
+          <label for="sec">Your sector</label>
+          <p class="h" id="secH">Sets a typical confidentiality lifetime.</p>
+          <select id="sec" aria-describedby="secH"></select>
+        </div>
+        <div class="fld">
+          <label for="x"><span>X — data shelf life</span><span class="v"><span id="xv">10</span> yrs</span></label>
+          <p class="h" id="xh">How long this must stay confidential. Use your longest obligation.</p>
+          <input type="range" id="x" min="1" max="40" value="10" aria-describedby="xh">
+        </div>
+        <div class="fld">
+          <label for="y"><span>Y — migration time</span><span class="v"><span id="yv">5</span> yrs</span></label>
+          <p class="h" id="yh">Discovery, suppliers, testing, rollout.</p>
+          <input type="range" id="y" min="1" max="20" value="5" aria-describedby="yh">
+        </div>
+        <div class="fld" style="margin-bottom:0">
+          <label for="z">Z — threat timeline</label>
+          <p class="h" id="zh">A planning judgement, stated so you can argue with it.</p>
+          <select id="z" aria-describedby="zh">
+            <option value="2030">Conservative — 2030</option>
+            <option value="2035" selected>Central — 2035 (NCSC)</option>
+            <option value="2040">Optimistic — 2040</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="rv" style="--d:120ms">
+        <div class="verdict" id="vd" role="status" aria-live="polite">
+          <div class="vhead" id="vh">Exposed</div>
+          <div class="formula" id="fm">X(10) + Y(5) = 15 &gt; Z(8.4)</div>
+          <p id="vt"></p>
+        </div>
+        <div class="card" style="margin-top:1.2rem">
+          <h3>What this can't tell you</h3>
+          <p>It gives you urgency, not an inventory. It can't say which of your
+            certificates use RSA, which endpoints lack forward secrecy, or which
+            suppliers will still be classical in 2031. That's what the scan is for.</p>
+          <a class="btn btn-main magnet" style="margin-top:1.2rem" href="#contact">Get the inventory</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ scan ═══ -->
+<section id="scan">
+  <div class="container">
+    <span class="chip rv">The assessment</span>
+    <h2 class="rv">What we actually measure</h2>
+    <p class="lede rv" style="margin-bottom:2.6rem">Evidence, not a questionnaire.
+      We connect to your estate and read what your servers really negotiate.</p>
+    <div class="grid g3" id="caps"></div>
+
+    <div class="card rv" style="margin-top:2.4rem">
+      <h3>What an external scan cannot see</h3>
+      <p>Internal systems, VPNs, SSH, code signing, database and backup encryption,
+        and hardware security modules are invisible from outside — and that's usually
+        where the difficult cases live. The free scan covers your public estate; the
+        paid assessment goes inside, which is what NCSC's 2028 discovery phase
+        actually requires.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ timeline ═══ -->
+<section id="timeline">
+  <div class="container">
+    <span class="chip rv">NCSC roadmap</span>
+    <h2 class="rv">Three dates already fixed</h2>
+    <div class="rail" style="margin-top:2.4rem">
+      <div class="stop rv"><div class="yr">2028</div><h3>Discover and plan</h3>
+        <p>A complete cryptographic inventory of every system that depends on
+          cryptography, and a migration plan. You can't replace what you can't
+          enumerate — which is why this comes first.</p></div>
+      <div class="stop rv" style="--d:100ms"><div class="yr">2031</div><h3>Migrate the priorities</h3>
+        <p>The highest-priority work done, starting with anything protecting
+          long-lived confidential data. This is where harvest-now-decrypt-later
+          exposure actually closes.</p></div>
+      <div class="stop rv" style="--d:200ms"><div class="yr">2035</div><h3>Finish</h3>
+        <p>Everything migrated. Under NIST's parallel timeline, today's 112-bit
+          algorithms are disallowed entirely from this point.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ team ═══ -->
+<section id="team">
+  <div class="container">
+    <span class="chip rv">The team</span>
+    <h2 class="rv">Who you'd be working with</h2>
+    <p class="lede rv" style="margin-bottom:2.6rem">Three founders at SETsquared Surrey,
+      the University of Surrey's incubator in Guildford.</p>
+    <div class="team">
+      <div class="card who rv">
+        <div class="face"><img src="assets/team/darshan.jpg" alt="" onerror="this.remove()">DC</div>
+        <h3>Darshan Chabbi</h3><div class="role">Co-founder</div>
+        <a href="https://www.linkedin.com/in/darshanchabbi27" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3ZM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05C21.4 8.65 22 11 22 14.1V21h-4v-6.1c0-1.46-.03-3.34-2.03-3.34-2.04 0-2.35 1.59-2.35 3.23V21h-3.99Z"/></svg>LinkedIn</a>
+      </div>
+      <div class="card who rv" style="--d:90ms">
+        <div class="face"><img src="assets/team/kiran.jpg" alt="" onerror="this.remove()">KP</div>
+        <h3>Kiran Pun</h3><div class="role">Co-founder</div>
+        <a href="https://www.linkedin.com/in/kiranpun" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3ZM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05C21.4 8.65 22 11 22 14.1V21h-4v-6.1c0-1.46-.03-3.34-2.03-3.34-2.04 0-2.35 1.59-2.35 3.23V21h-3.99Z"/></svg>LinkedIn</a>
+      </div>
+      <div class="card who rv" style="--d:180ms">
+        <div class="face"><img src="assets/team/bhanu.jpg" alt="" onerror="this.remove()">BB</div>
+        <h3>Bhanu Teja Battula</h3><div class="role">Co-founder</div>
+        <a href="https://www.linkedin.com/in/bhanutejabattula" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3ZM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05C21.4 8.65 22 11 22 14.1V21h-4v-6.1c0-1.46-.03-3.34-2.03-3.34-2.04 0-2.35 1.59-2.35 3.23V21h-3.99Z"/></svg>LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ contact ═══ -->
+<section id="contact">
+  <div class="container">
+    <div class="grid g2" style="gap:3rem;align-items:start">
+      <div>
+        <span class="chip rv">Get started</span>
+        <h2 class="rv">Find out what's exposed</h2>
+        <p class="lede rv">Tell us your domain and we'll run the scan and send the
+          report. No obligation, no sales call unless you ask for one.</p>
+        <div class="card rv" style="margin-top:1.6rem">
+          <div class="mono" style="font-size:.7rem;letter-spacing:.2em;color:var(--faint);text-transform:uppercase">Where we are</div>
+          <p style="margin-top:.6rem;color:var(--ink)">
+            <strong>SETsquared Surrey</strong><br>
+            Units 56–58, Surrey Technology Centre<br>
+            40 Occam Road, Guildford<br>Surrey GU2 7YG</p>
+        </div>
+      </div>
+      <form class="panel form rv" id="cf" novalidate style="--d:120ms">
+        <div class="row2">
+          <div><label class="fl" for="nm">Name <span class="req">*</span></label>
+            <input type="text" id="nm" autocomplete="name" placeholder="Your name" required></div>
+          <div><label class="fl" for="og">Organisation</label>
+            <input type="text" id="og" autocomplete="organization" placeholder="Optional"></div>
+        </div>
+        <div><label class="fl" for="em">Work email <span class="req">*</span></label>
+          <input type="email" id="em" autocomplete="email" placeholder="you@company.co.uk" required></div>
+        <div><label class="fl" for="dm">Domain to scan <span class="req">*</span></label>
+          <input type="text" id="dm" placeholder="acme.co.uk" required></div>
+        <div><label class="fl" for="ms">Anything we should know?</label>
+          <textarea id="ms" placeholder="Optional"></textarea></div>
+        <button class="btn btn-main magnet" type="submit" style="width:100%">
+          Request my free scan
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-7 7 7-7 7"/></svg>
+        </button>
+        <p class="note" id="fs" role="status" aria-live="polite">
+          We only scan domains you're authorised to have assessed.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:.8rem">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M4 32c6-18 10-18 16 0s10 18 16 0" fill="none" stroke="var(--blue)" stroke-width="5.5" stroke-linecap="round"/>
+            <g fill="var(--amber)"><rect x="40" y="22" width="5" height="20" rx="2.5"/>
+            <rect x="49" y="16" width="5" height="32" rx="2.5"/><rect x="58" y="26" width="5" height="12" rx="2.5"/></g>
+          </svg>Quantum Ready</a>
+        <p style="max-width:34ch">Post-quantum readiness assessments for UK organisations
+          working to the NCSC 2035 deadline.</p>
+      </div>
+      <div><h3>Site</h3>
+        <a href="#threat">The threat</a><a href="#deadline">Deadline</a>
+        <a href="#scan">What we scan</a><a href="#team">Team</a></div>
+      <div><h3>References</h3>
+        <a href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines" rel="noopener">NCSC timelines</a>
+        <a href="https://csrc.nist.gov/pubs/fips/203/final" rel="noopener">FIPS 203</a>
+        <a href="https://github.com/DarshanC27/Quantum.Ready" rel="noopener">Source code</a></div>
+    </div>
+    <div style="border-top:1px solid var(--line);padding-top:1.4rem;display:flex;
+      justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <span>© <span id="yr">2026</span> Quantum Ready</span>
+      <span>Guildford, Surrey, United Kingdom</span>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)};
+var RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ══ 3D ENGINE ═══════════════════════════════════════════════
+   Perspective projection + two rotations, with depth-sorted line
+   drawing so the far side of the rig reads as behind the near
+   side. Three.js would do this, but the page must open from disk
+   with nothing fetched, so the maths lives here. */
+function Engine(cv){
+  this.cv=cv; this.ctx=cv.getContext("2d");
+  this.spin=0; this.tilt=.34; this.py=0; this.px=0; this.zoom=1; this.run=true;
+  this.resize();
+}
+Engine.prototype.resize=function(){
+  var r=this.cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);
+  this.w=r.width; this.h=r.height;
+  this.cv.width=Math.max(1,r.width*d|0); this.cv.height=Math.max(1,r.height*d|0);
+  this.ctx.setTransform(d,0,0,d,0,0);
+};
+Engine.prototype.proj=function(p){
+  var cy=Math.cos(this.spin),sy=Math.sin(this.spin);
+  var x=p[0]*cy-p[2]*sy, z=p[0]*sy+p[2]*cy;
+  var cx=Math.cos(this.tilt),sx=Math.sin(this.tilt);
+  var y=p[1]*cx-z*sx; z=p[1]*sx+z*cx;
+  var d=4.1-z; if(d<.15)d=.15;
+  var f=Math.min(this.w,this.h)*1.16*this.zoom/d;
+  // canvas Y grows downward, world Y grows upward
+  return{x:this.w/2+x*f+this.px*26, y:this.h/2-y*f+this.py*16, d:d};
+};
+
+/* ── the rig ─────────────────────────────────────────────────────
+   A dilution refrigerator: the gold "chandelier" a superconducting
+   quantum computer actually lives inside. Six plates of decreasing
+   radius, each a real disc with a bolt circle and spokes; four posts
+   running the full height; legs stepping the taper in at each gap;
+   coax bundles hugging the stack down to the mixing chamber, where
+   the qubit chip sits. The plates are what make it recognisable, so
+   they are filled rather than drawn as bare rings.
+
+   Kinds: 0 plate rim · 1 plate detail · 2 structure · 3 coax · 4 chip
+------------------------------------------------------------------ */
+var YC=0.28;                                    // centres the model in frame
+function buildRig(){
+  var P=[],E=[],D=[];
+  function pt(a,r,y){P.push([Math.cos(a)*r,y-YC,Math.sin(a)*r]);return P.length-1;}
+  function ring(r,y,seg){
+    var ids=[];for(var i=0;i<seg;i++)ids.push(pt(i/seg*Math.PI*2,r,y));return ids;
+  }
+  function close(ids,kind){
+    for(var i=0;i<ids.length;i++)E.push([ids[i],ids[(i+1)%ids.length],kind]);
+  }
+  // plates: [y, radius]. A gentle taper, not a cone.
+  var plates=[[1.50,1.30],[0.92,1.17],[0.36,1.00],[-0.14,0.79],[-0.60,0.55],[-1.02,0.31]];
+  var SEG=48, rim=[];
+  plates.forEach(function(pl,pi){
+    var y=pl[0], r=pl[1];
+    var outer=ring(r,y,SEG), inner=ring(r*.60,y,SEG);
+    close(outer,0); close(inner,1);
+    for(var k=0;k<16;k++){                       // spokes read as a machined disc
+      var i=Math.round(k/16*SEG)%SEG;
+      E.push([inner[i],outer[i],1]);
+    }
+    D.push({ids:outer,pi:pi});                   // filled face
+    rim.push({outer:outer,y:y,r:r});
+  });
+  // four posts, full height, segmented so they depth-sort against the plates
+  for(var q=0;q<4;q++){
+    var a=q/4*Math.PI*2+Math.PI/4, prev=null;
+    for(var t=0;t<=14;t++){
+      var id=pt(a,.36,1.50-t/14*2.52);
+      if(prev!==null)E.push([prev,id,2]);
+      prev=id;
+    }
+  }
+  // legs stepping each plate in to the next
+  for(var s=0;s<rim.length-1;s++){
+    for(var k=0;k<8;k++){
+      var i=Math.round(k/8*SEG)%SEG;
+      E.push([rim[s].outer[i],rim[s+1].outer[i],2]);
+    }
+  }
+  // coax bundles: they hug the stack rather than sweeping outward
+  for(var c=0;c<12;c++){
+    var ang=c/12*Math.PI*2+.13, prev2=null;
+    for(var t=0;t<=30;t++){
+      var f=t/30, y=1.50-f*2.52;
+      // local plate radius, interpolated, with a little slack between plates
+      var seg=Math.min(4,Math.floor(f*5)), lf=f*5-seg;
+      var r=(plates[seg][1]*(1-lf)+plates[seg+1][1]*lf)*.88+Math.sin(lf*Math.PI)*.05;
+      var id=pt(ang,r,y);
+      if(prev2!==null)E.push([prev2,id,3]);
+      prev2=id;
+    }
+  }
+  // mixing-chamber can under the last plate
+  var canT=ring(.26,-1.02,24), canB=ring(.26,-1.30,24);
+  close(canT,1); close(canB,1);
+  for(var k=0;k<12;k++){var i=Math.round(k/12*24)%24;E.push([canT[i],canB[i],2]);}
+  // the qubit chip
+  var chip=[];
+  for(var i=0;i<4;i++)chip.push(pt(i/4*Math.PI*2+Math.PI/4,.20,-1.36));
+  close(chip,4);
+  for(var i=0;i<4;i++)E.push([chip[i],chip[(i+2)%4],4]);
+  var core=pt(0,0,-1.36);
+  // mast and top cap
+  var cap=ring(.24,1.94,20); close(cap,1);
+  for(var k=0;k<4;k++){var i=Math.round(k/4*20)%20;E.push([cap[i],rim[0].outer[Math.round(k/4*SEG)%SEG],2]);}
+  var mt=pt(0,0,1.94), mb=pt(0,0,1.50); E.push([mt,mb,2]);
+  return{points:P,edges:E,discs:D,core:core};
+}
+
+var STROKE=["rgba(244,203,94,.98)","rgba(226,183,86,.50)",
+            "rgba(158,176,214,.46)","rgba(251,146,60,.30)","rgba(34,211,238,.98)"];
+var WIDTH=[2.0,.85,1.15,.75,2.4];
+var FACE=["rgba(240,199,94,","rgba(236,192,92,","rgba(230,186,90,",
+          "rgba(224,180,88,","rgba(218,174,86,","rgba(212,168,84,"];
+
+/* Depth is quantised into slabs and every edge sharing a slab and a kind
+   is stroked as one path. A per-edge stroke() is correct but costs ~1500
+   draw calls a frame; this costs about thirty and looks the same, because
+   what the eye reads is the depth fade, not the exact ordering of two
+   lines a millimetre apart. Plate faces are inserted at their own slab so
+   they still occlude the wires behind them. */
+var SLABS=7;
+Engine.prototype.render=function(shape,progress){
+  var c=this.ctx; c.clearRect(0,0,this.w,this.h);
+  var flat=shape.points.map(this.proj,this);
+  var prog=(progress===undefined?1:progress);
+  var shown=Math.ceil(shape.edges.length*prog);
+  var i,n,k,s;
+
+  var lo=1e9,hi=-1e9;
+  for(i=0;i<flat.length;i++){var d=flat[i].d; if(d<lo)lo=d; if(d>hi)hi=d;}
+  var span=(hi-lo)||1;
+
+  var bins=[];                                   // bins[slab][kind] = [x,y,x,y…]
+  for(s=0;s<SLABS;s++){bins.push([[],[],[],[],[]]);}
+  var faces=[];                                  // {slab, disc}
+
+  for(i=0;i<=shown&&i<shape.edges.length;i++){
+    var e=shape.edges[i], a=flat[e[0]], b=flat[e[1]];
+    s=((a.d+b.d)/2-lo)/span*SLABS|0; if(s>SLABS-1)s=SLABS-1; if(s<0)s=0;
+    bins[s][e[2]].push(a.x,a.y,b.x,b.y);
+  }
+  for(i=0;i<shape.discs.length;i++){
+    if(prog<(i+1)/(shape.discs.length+2))continue;
+    var ids=shape.discs[i].ids, dsum=0;
+    for(n=0;n<ids.length;n++)dsum+=flat[ids[n]].d;
+    s=(dsum/ids.length-lo)/span*SLABS|0; if(s>SLABS-1)s=SLABS-1; if(s<0)s=0;
+    faces.push({s:s,f:shape.discs[i]});
+  }
+
+  for(s=SLABS-1;s>=0;s--){                       // far slabs first
+    var mid=lo+(s+.5)/SLABS*span;
+    var near=1-Math.min(1,Math.max(0,(mid-2.5)/2.6));
+    for(n=0;n<faces.length;n++){
+      if(faces[n].s!==s)continue;
+      var fids=faces[n].f.ids;
+      c.globalAlpha=.09+near*.15;
+      c.fillStyle=FACE[faces[n].f.pi]+"1)";
+      c.beginPath(); c.moveTo(flat[fids[0]].x,flat[fids[0]].y);
+      for(k=1;k<fids.length;k++)c.lineTo(flat[fids[k]].x,flat[fids[k]].y);
+      c.closePath(); c.fill();
+    }
+    for(k=0;k<5;k++){
+      var pts=bins[s][k]; if(!pts.length)continue;
+      c.globalAlpha=.14+near*.86;
+      c.strokeStyle=STROKE[k]; c.lineWidth=WIDTH[k];
+      if(k===4){c.shadowColor="#22d3ee";c.shadowBlur=13;}else c.shadowBlur=0;
+      c.beginPath();
+      for(n=0;n<pts.length;n+=4){c.moveTo(pts[n],pts[n+1]);c.lineTo(pts[n+2],pts[n+3]);}
+      c.stroke();
+    }
+  }
+  c.shadowBlur=0; c.globalAlpha=1;
+  // the chip glows: that is where the qubits are
+  var core=flat[shape.core], R=Math.min(this.w,this.h)*.13;
+  var g=c.createRadialGradient(core.x,core.y,0,core.x,core.y,R);
+  g.addColorStop(0,"rgba(34,211,238,.42)"); g.addColorStop(1,"rgba(34,211,238,0)");
+  c.fillStyle=g; c.beginPath(); c.arc(core.x,core.y,R,0,7); c.fill();
+};
+
+/* ══ starfield ═══════════════════════════════════════════════ */
+(function(){
+  var cv=$("stars"),c=cv.getContext("2d"),st=[],w,h;
+  function size(){
+    var d=Math.min(devicePixelRatio||1,2);
+    w=innerWidth;h=innerHeight;
+    cv.width=w*d|0;cv.height=h*d|0;cv.style.width=w+"px";cv.style.height=h+"px";
+    c.setTransform(d,0,0,d,0,0);
+    st=[];for(var i=0;i<170;i++)st.push({x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*1.25+.25,p:Math.random()*Math.PI*2,s:.4+Math.random()*.9});
+  }
+  function draw(t){
+    c.clearRect(0,0,w,h);
+    for(var i=0;i<st.length;i++){var s=st[i];
+      var tw=RM?.6:(Math.sin(t*.0011*s.s+s.p)*.5+.5);
+      c.globalAlpha=.12+tw*.55; c.fillStyle="#cfe0ff";
+      c.beginPath();c.arc(s.x,s.y,s.r,0,7);c.fill();}
+    c.globalAlpha=1;
+  }
+  size();draw(0);
+  if(!RM)(function loop(t){draw(t);requestAnimationFrame(loop)})(0);
+  addEventListener("resize",function(){size();draw(0)});
+})();
+
+/* ══ boot sequence ═══════════════════════════════════════════ */
+var rig=new Engine($("rig")), shape=buildRig();
+var STEPS=["initialising","cooling to 15 millikelvin","calibrating qubits",
+           "loading lattice module","probing TLS stack","ready"];
+(function(){
+  var el=$("boot"),pct=$("bootPct"),lbl=$("bootLbl"),fill=$("bootFill");
+  function done(){
+    el.classList.add("gone");
+    setTimeout(function(){el.style.display="none"},900);
+    start();
+  }
+  if(RM){pct.textContent="100";lbl.textContent="ready";fill.style.width="100%";
+    rig.render(shape,1);setTimeout(done,180);return;}
+  var p=0;
+  var iv=setInterval(function(){
+    p=Math.min(100,p+Math.random()*11+3);
+    pct.textContent=p|0; fill.style.width=p+"%";
+    lbl.textContent=STEPS[Math.min(STEPS.length-1,Math.floor(p/100*STEPS.length))];
+    rig.render(shape,p/100);           // the rig assembles as it loads
+    if(p>=100){clearInterval(iv);setTimeout(done,320);}
+  },110);
+})();
+
+function start(){
+  /* rig animation */
+  if(RM){rig.render(shape,1);}
+  else{(function loop(){
+    if(!rig.run)return;
+    rig.spin+=.0042;
+    rig.tilt+=((rig.py*.34+.34)-rig.tilt)*.05;
+    rig.render(shape,1);
+    requestAnimationFrame(loop);
+  })();}
+  addEventListener("resize",function(){rig.resize();rig.render(shape,1)});
+  document.addEventListener("visibilitychange",function(){
+    rig.run=!document.hidden;
+    if(rig.run&&!RM)(function loop(){if(!rig.run)return;rig.spin+=.0042;
+      rig.render(shape,1);requestAnimationFrame(loop)})();
+  });
+  if(!RM)addEventListener("mousemove",function(e){
+    rig.px=(e.clientX/innerWidth)*2-1; rig.py=(e.clientY/innerHeight)*2-1;
+    var cur=$("cursor");cur.style.opacity="1";
+    cur.style.left=e.clientX+"px";cur.style.top=e.clientY+"px";
+  },{passive:true});
+
+  /* scroll zoom on the rig */
+  if(!RM){var tick=false;addEventListener("scroll",function(){
+    if(tick)return;tick=true;requestAnimationFrame(function(){
+      var p=Math.min(1,scrollY/innerHeight);
+      rig.zoom=1+p*.42; tick=false;
+    });
+  },{passive:true});}
+
+  reveal(); counters(); scramble();
+}
+
+/* ══ reveal ══════════════════════════════════════════════════ */
+function reveal(){
+  var els=document.querySelectorAll(".rv");
+  if(RM||!("IntersectionObserver" in window)){
+    [].forEach.call(els,function(e){e.classList.add("in")});return;}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}})
+  },{threshold:.12,rootMargin:"0px 0px -6% 0px"});
+  [].forEach.call(els,function(e){io.observe(e)});
+}
+
+/* ══ counters ════════════════════════════════════════════════ */
+function counters(){
+  var els=document.querySelectorAll("[data-to]");
+  function run(el){
+    var to=+el.dataset.to, from=+(el.dataset.from||0), sfx=el.dataset.suffix||"";
+    if(RM){el.textContent=to+sfx;return;}
+    var t0=null;
+    requestAnimationFrame(function step(t){
+      if(!t0)t0=t; var p=Math.min((t-t0)/1200,1), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e)+sfx;
+      if(p<1)requestAnimationFrame(step);
+    });
+  }
+  if(!("IntersectionObserver" in window)){[].forEach.call(els,run);return;}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){run(x.target);io.unobserve(x.target)}})},{threshold:.6});
+  [].forEach.call(els,function(e){io.observe(e)});
+}
+
+/* ══ text scramble ═══════════════════════════════════════════ */
+function scramble(){
+  var el=document.querySelector("[data-scramble]"); if(!el||RM)return;
+  var final=el.textContent, chars="!<>-_\\/[]{}—=+*^?#01";
+  var frame=0, queue=[];
+  for(var i=0;i<final.length;i++)
+    queue.push({to:final[i],start:Math.floor(Math.random()*22),end:Math.floor(Math.random()*22)+22});
+  (function tick(){
+    var out="",done=0;
+    for(var i=0;i<queue.length;i++){var q=queue[i];
+      if(frame>=q.end){done++;out+=q.to;}
+      else if(frame>=q.start){out+=chars[Math.floor(Math.random()*chars.length)];}
+      else out+=q.to===" "?" ":chars[Math.floor(Math.random()*chars.length)];
+    }
+    el.textContent=out; frame++;
+    if(done<queue.length)requestAnimationFrame(tick);
+  })();
+}
+
+/* ══ bit-decay chart ═════════════════════════════════════════ */
+(function(){
+  var DATA=[["RSA-2048","Key exchange, signatures",112,0],
+            ["RSA-4096","Twice the key, same result",152,0],
+            ["ECDSA P-256","Certificate signatures",128,0],
+            ["X25519","TLS key exchange",128,0],
+            ["AES-128","Record encryption",128,64],
+            ["AES-256","Record encryption",256,128],
+            ["ML-KEM-768","FIPS 203 — the replacement",128,128]];
+  var host=$("decay");
+  DATA.forEach(function(d,i){
+    var row=document.createElement("div");
+    row.className="algo rv"; row.style.setProperty("--d",(i*55)+"ms");
+    var total=Math.ceil(d[2]/8), live=Math.ceil(d[3]/8), bits="";
+    for(var b=0;b<total;b++) bits+='<span class="bit" data-dead="'+(b>=live?1:0)+'"></span>';
+    var cls=d[3]===0?"zero":(d[3]>=128?"safe":"");
+    row.innerHTML='<div class="nm">'+d[0]+'<small>'+d[1]+'</small></div>'+
+      '<div class="bits">'+bits+'</div>'+
+      '<div class="vl '+cls+'">'+d[3]+' bits</div>';
+    host.appendChild(row);
+  });
+  function decay(row){
+    var bits=row.querySelectorAll(".bit[data-dead='1']");
+    if(RM){[].forEach.call(bits,function(b){b.classList.add("dead")});return;}
+    [].forEach.call(bits,function(b,i){setTimeout(function(){b.classList.add("dead")},i*26)});
+  }
+  if(!("IntersectionObserver" in window)){
+    [].forEach.call(host.children,decay);return;}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){decay(x.target);io.unobserve(x.target)}})},{threshold:.45});
+  [].forEach.call(host.children,function(r){io.observe(r)});
+})();
+
+/* ══ capability cards ════════════════════════════════════════ */
+(function(){
+  var CAPS=[
+    ["Certificates","M3 4h18v16H3z|M7 9h10M7 13h6","Full chain retrieval, key algorithm and strength, signature algorithm, expiry, trust and hostname validation, wildcard blast radius."],
+    ["TLS configuration","M12 2 3 6v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V6Z","Real negotiation from SSLv3 to TLS 1.3, complete cipher enumeration, forward secrecy, and the broken suites that should have gone a decade ago."],
+    ["Post-quantum probe","M4 9h16M4 15h16M9 4v16M15 4v16|M3 20 20 3","We probe directly for hybrid ML-KEM — X25519MLKEM768 and its siblings. This is the measurement that says whether today's traffic survives."],
+    ["Licences","M14 2H6v20h12V8Z|M14 2v6h6","Third-party components mapped to SPDX licences, flagging the AGPL network clause, SSPL, GPL obligations and end-of-life libraries."],
+    ["DNS and mail","M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z","CAA, DNSSEC, SPF and DMARC policy strength. Domain spoofing sits behind most invoice fraud."],
+    ["Compliance","M9 11l3 3L22 4|M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11","Mapped to NCSC's roadmap, NIST FIPS 203/204/205, CNSA 2.0, PCI DSS 4.0, UK GDPR Article 32, NIS2 and ISO 27001."]];
+  var host=$("caps");
+  CAPS.forEach(function(c,i){
+    var paths=c[1].split("|").map(function(d){return '<path d="'+d+'"/>'}).join("");
+    var el=document.createElement("div");
+    el.className="card rv tilt"; el.style.setProperty("--d",(i%3*90)+"ms");
+    el.innerHTML='<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+      'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+paths+'</svg></div>'+
+      '<h3>'+c[0]+'</h3><p>'+c[2]+'</p>';
+    host.appendChild(el);
+  });
+})();
+
+/* ══ card spotlight + magnetic buttons ═══════════════════════ */
+if(!RM){
+  document.addEventListener("mousemove",function(e){
+    var card=e.target.closest?e.target.closest(".card"):null;
+    if(card){var r=card.getBoundingClientRect();
+      card.style.setProperty("--mx",(e.clientX-r.left)+"px");
+      card.style.setProperty("--my",(e.clientY-r.top)+"px");}
+  },{passive:true});
+  document.querySelectorAll(".magnet").forEach(function(b){
+    b.addEventListener("mousemove",function(e){
+      var r=b.getBoundingClientRect();
+      b.style.transform="translate("+((e.clientX-r.left-r.width/2)*.16).toFixed(1)+"px,"+
+        ((e.clientY-r.top-r.height/2)*.24).toFixed(1)+"px)";
+    });
+    b.addEventListener("mouseleave",function(){b.style.transform=""});
+  });
+}
+
+/* ══ Mosca calculator ════════════════════════════════════════
+   Mirrors quantumready/engine/quantum.py exactly. Change one,
+   change both — a page that disagrees with the tool it sells is
+   worse than having no calculator. */
+var SECT={general:[10,"A common default. Replace with your real retention obligation."],
+  healthcare:[25,"Patient records carry lifetime confidentiality duties."],
+  government:[30,"National security and census material is classified for decades."],
+  defence:[30,"Classified material has multi-decade review periods."],
+  pharmaceutical:[25,"Trial data holds value for the life of the patent and beyond."],
+  legal:[20,"Matter files and privileged material outlive the engagement."],
+  insurance:[20,"Policy and claims history persists for the life of cover."],
+  finance:[15,"Mortgage and pension records run for decades."],
+  education:[15,"Student records are retained long after graduation."],
+  technology:[10,"Source code and customer data."],
+  retail:[7,"Payment data under PCI and tax retention."]};
+(function(){
+  var sec=$("sec"),x=$("x"),y=$("y"),z=$("z");
+  Object.keys(SECT).forEach(function(k){
+    var o=document.createElement("option");o.value=k;
+    o.textContent=k.charAt(0).toUpperCase()+k.slice(1)+" — "+SECT[k][0]+" yrs";
+    if(k==="general")o.selected=true; sec.appendChild(o);
+  });
+  sec.addEventListener("change",function(){
+    var e=SECT[sec.value]; if(e){x.value=e[0];$("secH").textContent=e[1];} calc();});
+  [x,y,z].forEach(function(i){i.addEventListener("input",calc);i.addEventListener("change",calc)});
+  calc();
+})();
+function calc(){
+  var X=+$("x").value, Y=+$("y").value, QY=+$("z").value;
+  $("xv").textContent=X; $("yv").textContent=Y;
+  var n=new Date(), doy=Math.floor((n-new Date(n.getFullYear(),0,1))/864e5);
+  var Z=QY-(n.getFullYear()+doy/365), T=X+Y, risk=T>Z, gap=T-Z;
+  var dl=Math.floor(QY-X-Y);
+  $("fm").textContent="X("+X+") + Y("+Y+") = "+T+(risk?" > ":" ≤ ")+"Z("+Z.toFixed(1)+")";
+  var vd=$("vd");
+  if(risk){
+    vd.className="verdict"; $("vh").textContent="Exposed";
+    $("vt").innerHTML="Data created today must stay confidential for <strong>"+X+
+      " years</strong>, and migration takes about <strong>"+Y+"</strong>. That's "+T+
+      " years of protection needed against only <strong>"+Z.toFixed(1)+
+      "</strong> remaining. Shortfall: <strong style='color:var(--danger)'>"+gap.toFixed(1)+
+      " years</strong>. "+(dl<n.getFullYear()
+        ? "The latest safe start date was "+dl+" — already passed, so the goal now is to shorten the exposure window rather than eliminate it."
+        : "Migration must begin by "+dl+" at the latest.");
+  }else{
+    vd.className="verdict ok"; $("vh").textContent="Within tolerance";
+    $("vt").innerHTML=T+" years of required protection fits inside the <strong>"+
+      Z.toFixed(1)+"</strong> remaining, with "+Math.abs(gap).toFixed(1)+
+      " to spare. Migration must still begin by <strong>"+dl+
+      "</strong>, and the margin vanishes if the threat date moves earlier.";
+  }
+}
+
+/* ══ nav + form ══════════════════════════════════════════════ */
+$("burger").addEventListener("click",function(){
+  var o=$("nl").classList.toggle("open");
+  this.setAttribute("aria-expanded",String(o));
+  this.setAttribute("aria-label",o?"Close menu":"Open menu");
+});
+$("nl").addEventListener("click",function(e){
+  if(e.target.tagName==="A"){$("nl").classList.remove("open");
+    $("burger").setAttribute("aria-expanded","false");}
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&$("nl").classList.contains("open")){
+    $("nl").classList.remove("open");$("burger").focus();}
+});
+
+$("cf").addEventListener("submit",function(e){
+  e.preventDefault();
+  var nm=$("nm").value.trim(),em=$("em").value.trim(),dm=$("dm").value.trim(),st=$("fs");
+  var bad=!nm?$("nm"):(!em||em.indexOf("@")<1)?$("em"):(!dm||dm.indexOf(".")<1)?$("dm"):null;
+  if(bad){st.textContent="Please complete the highlighted field before submitting.";bad.focus();return;}
+  var body="Name: "+nm+"\nOrganisation: "+($("og").value.trim()||"-")+"\nEmail: "+em+
+    "\nDomain: "+dm+"\n\n"+($("ms").value.trim()||"(no notes)")+
+    "\n\n-- I confirm I am authorised to have this domain assessed.";
+  location.href="mailto:darshanchabbi271@gmail.com?subject="+
+    encodeURIComponent("Free scan request: "+dm)+"&body="+encodeURIComponent(body);
+  st.textContent="Opening your email client…";
+});
+
+$("yr").textContent=new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

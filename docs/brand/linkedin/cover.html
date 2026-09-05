@@ -1,0 +1,40 @@
+<style>
+  html,body{margin:0;padding:0}
+  /* LinkedIn overlays the company logo on the lower-left of the cover, so the
+     bottom-left ~270x120px is kept deliberately empty. */
+  .bar{
+    width:1128px;height:191px;position:relative;overflow:hidden;
+    background:radial-gradient(80% 190% at 18% 30%,#12203f 0%,#070c18 55%,#05070f 100%);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  .glow{position:absolute;inset:0;
+    background:radial-gradient(380px 240px at 70% 130%,rgba(240,199,94,.15),transparent 70%),
+               radial-gradient(340px 220px at 95% -25%,rgba(34,211,238,.13),transparent 70%)}
+  .msg{position:absolute;left:296px;top:38px;z-index:1}
+  .msg h1{margin:0;font-size:29px;font-weight:750;letter-spacing:-.022em;color:#eef3ff;
+    line-height:1.12;white-space:nowrap}
+  .msg p{margin:6px 0 0;font-size:14px;color:#9fb2d6;white-space:nowrap}
+  .dl{position:absolute;right:44px;top:46px;z-index:1;text-align:right}
+  .dl .k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;
+    letter-spacing:.17em;text-transform:uppercase;color:#22d3ee;margin-bottom:8px;white-space:nowrap}
+  .dl .y{display:flex;gap:14px;justify-content:flex-end}
+  .dl .y span{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:18px;
+    font-weight:700;color:#f0c75e;line-height:1;white-space:nowrap}
+  .dl .y small{display:block;font-size:8px;color:#7c8db4;letter-spacing:.1em;
+    font-weight:400;margin-top:4px;text-transform:uppercase}
+</style>
+<div class="bar">
+  <div class="glow"></div>
+  <div class="msg">
+    <h1>Encrypted today. Readable tomorrow.</h1>
+    <p>Post-quantum readiness assessments for UK organisations</p>
+  </div>
+  <div class="dl">
+    <div class="k">NCSC migration deadlines</div>
+    <div class="y">
+      <span>2028<small>inventory</small></span>
+      <span>2031<small>priority</small></span>
+      <span>2035<small>complete</small></span>
+    </div>
+  </div>
+</div>

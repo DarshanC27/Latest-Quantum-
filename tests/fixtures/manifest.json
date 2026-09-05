@@ -1,0 +1,172 @@
+{
+  "ca-root-rsa4096": {
+    "fingerprint_sha256": "d983e3bdb413fe4df2e7db632106d047a9eb832623e5789b096da3048bae38bd",
+    "issuer": "CN=ca-root-rsa4096,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "397835475769663769388322785189586177135439684879",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=ca-root-rsa4096,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "dsa2048": {
+    "fingerprint_sha256": "5b70901a6cebf20290ff9ccd1956bb9d675e2829f308eed1526522533be6fb07",
+    "issuer": "CN=dsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "105398825906694373863525061517761757478646337908",
+    "signature_oid": "2.16.840.1.101.3.4.3.2",
+    "subject": "CN=dsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "dv-ecdsa-p256": {
+    "fingerprint_sha256": "3336fd9204bc5b0cc52329611fb7b8bced079bb9d9affe96d4aeca57ffc0ed0a",
+    "issuer": "CN=dv-ecdsa-p256,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "673912622339865402520020045597641074382936561517",
+    "signature_oid": "1.2.840.10045.4.3.2",
+    "subject": "CN=dv-ecdsa-p256,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "ecdsa-p256": {
+    "fingerprint_sha256": "ea72cc9dabbc7a9fdee2e66dce50581def4287895ad32b22bc8d40933177d182",
+    "issuer": "CN=ecdsa-p256,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "227883296019081978438168160327802871096290255303",
+    "signature_oid": "1.2.840.10045.4.3.2",
+    "subject": "CN=ecdsa-p256,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "ecdsa-p384": {
+    "fingerprint_sha256": "27349c377972c39a5a09582ca464739a2175db372ef56271303f4b858c488dbb",
+    "issuer": "CN=ecdsa-p384,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "170141616200598107455574206179670586992646453666",
+    "signature_oid": "1.2.840.10045.4.3.3",
+    "subject": "CN=ecdsa-p384,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "ecdsa-p521": {
+    "fingerprint_sha256": "ae10772eb90ca8f711ea751171f0588616390758614dd31ceec6f5f8e39965d5",
+    "issuer": "CN=ecdsa-p521,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "275880169240331940809476480448823748411763638552",
+    "signature_oid": "1.2.840.10045.4.3.4",
+    "subject": "CN=ecdsa-p521,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "ed25519": {
+    "fingerprint_sha256": "f51caf91742c4870146229a4e2b08431adc62c46d4aa0c383cd0692aab8b2914",
+    "issuer": "CN=ed25519,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "152688756711825565545813129300671569901612485665",
+    "signature_oid": "1.3.101.112",
+    "subject": "CN=ed25519,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "ev-rsa2048": {
+    "fingerprint_sha256": "528c7fc1983f7e707fd44d90d860203d2b4a84bdeea3175bf7482571ffcdb602",
+    "issuer": "CN=ev-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "312866438326544848661810933429038593939480149328",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=ev-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "expired-rsa2048": {
+    "fingerprint_sha256": "b3d345c275961ba886826b8c34ad8b8baec5b215f89b6a345bed42654b077780",
+    "issuer": "CN=expired-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2025-12-06T12:00:00+00:00",
+    "not_before": "2023-11-07T12:00:00+00:00",
+    "serial": "483911261185859209246571498585339648639521950260",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=expired-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "expiring-soon-rsa2048": {
+    "fingerprint_sha256": "1fac57f591b1079de52009baca628be24c1c475214aacec185248f17beddcde0",
+    "issuer": "CN=expiring-soon-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-01-27T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "721409467606337780858515142491433610948125889570",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=expiring-soon-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "longlife-rsa2048": {
+    "fingerprint_sha256": "d31b1b66272eb40563771658c31878dfc1803e5622f7c566333ab06535f4085a",
+    "issuer": "CN=longlife-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2030-02-23T12:00:00+00:00",
+    "not_before": "2025-06-29T12:00:00+00:00",
+    "serial": "633290331430391037630484262204900290160866309383",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=longlife-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "many-san-ecdsa": {
+    "fingerprint_sha256": "388a4272738570e3bea8c842c0681160d75eca12ebe8285faaaba671d9696f97",
+    "issuer": "CN=many-san-ecdsa,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "491794389331872988897012281247264350733572397340",
+    "signature_oid": "1.2.840.10045.4.3.2",
+    "subject": "CN=many-san-ecdsa,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "no-san-rsa2048": {
+    "fingerprint_sha256": "31c7e4349483f3fa3bed0fb6e73dfe2a439659785ec8fc01c6c0f1a4e8981ed9",
+    "issuer": "CN=no-san-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "354845790221500026383106563789475538449962240028",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=no-san-rsa2048,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "rsa-exp3": {
+    "fingerprint_sha256": "9ac4fad63d352daedb789c4f90d93a1824956e70e1bbe10cadf2310b065fcae2",
+    "issuer": "CN=rsa-exp3,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "589562688093614570343810709213777438200843793529",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=rsa-exp3,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "rsa1024-weak": {
+    "fingerprint_sha256": "eaf182f1baa08ae5b2ed22211df9934e6a48e7b0d6680e021b7a2538ffd252b1",
+    "issuer": "CN=rsa1024-weak,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "289660032072116058208073568744403239589481704722",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=rsa1024-weak,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "rsa2048-md5-legacy": {
+    "derived_from": "rsa2048-sha256",
+    "signature_oid": "1.2.840.113549.1.1.4"
+  },
+  "rsa2048-sha1-legacy": {
+    "derived_from": "rsa2048-sha256",
+    "signature_oid": "1.2.840.113549.1.1.5"
+  },
+  "rsa2048-sha256": {
+    "fingerprint_sha256": "e84b2e7be87cf8517c5513b7c919ca9f2bb1ecc175e5d35d709a9db267c33d6e",
+    "issuer": "CN=rsa2048-sha256,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "371795864526588215764067522132512734218488662416",
+    "signature_oid": "1.2.840.113549.1.1.11",
+    "subject": "CN=rsa2048-sha256,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "rsa4096-sha384": {
+    "fingerprint_sha256": "ea9a071c437b28f27b66eabc6f495a87db1e43be8784eda9847e4e17e1029efc",
+    "issuer": "CN=rsa4096-sha384,O=Quantum Ready Test Co,ST=Surrey,C=GB",
+    "not_after": "2026-12-16T12:00:00+00:00",
+    "not_before": "2025-12-16T12:00:00+00:00",
+    "serial": "542730227309449403750024247559274443947790911775",
+    "signature_oid": "1.2.840.113549.1.1.12",
+    "subject": "CN=rsa4096-sha384,O=Quantum Ready Test Co,ST=Surrey,C=GB"
+  },
+  "server-ecdsa-p256": {
+    "role": "local test server keypair"
+  },
+  "server-rsa1024": {
+    "role": "local test server keypair"
+  },
+  "server-rsa2048": {
+    "role": "local test server keypair"
+  }
+}

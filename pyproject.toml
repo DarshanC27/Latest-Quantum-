@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantumready"
+version = "1.0.0"
+description = "Post-quantum readiness, certificate, licence and cryptographic risk scanner"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+keywords = [
+    "post-quantum", "pqc", "cryptography", "tls", "security", "compliance",
+    "ml-kem", "mosca", "cbom", "harvest-now-decrypt-later",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+    "Topic :: System :: Networking :: Monitoring",
+]
+
+# No runtime dependencies, deliberately. A tool that audits supply-chain
+# and cryptographic risk should not add either.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "cryptography>=41.0"]
+
+[project.scripts]
+quantumready = "quantumready.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/DarshanC27/Quantum.Ready"
+Repository = "https://github.com/DarshanC27/Quantum.Ready"
+
+[tool.setuptools.packages.find]
+include = ["quantumready*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    # The scanner offers TLS 1.0 on purpose, to assess servers that still
+    # accept it. Python deprecating the constant is not a finding.
+    "ignore:ssl.TLSVersion.TLSv1 is deprecated:DeprecationWarning",
+]

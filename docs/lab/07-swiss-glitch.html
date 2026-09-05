@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIGNAL/NOISE — Swiss meets glitch</title>
+<style>
+/* 07 — SWISS POSTER MEETS GLITCH
+   A strict Helvetica grid in red, black and white — then corrupted.
+   The order has to be genuinely rigid first, or the chaos reads as
+   sloppiness rather than as a deliberate attack on the layout. */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#e2001a;--ink:#000;--paper:#fff;--gut:clamp(.7rem,1.5vw,1.3rem)}
+body{
+  background:var(--paper);color:var(--ink);overflow-x:hidden;
+  font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.4;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--red);color:var(--paper)}
+
+.sheet{max-width:1280px;margin:0 auto;padding:clamp(1rem,3vw,2.4rem)}
+.g{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut)}
+.rule{border-top:2px solid var(--ink);grid-column:1/-1;margin:.6rem 0}
+.rule.red{border-color:var(--red)}
+
+.meta{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+
+h1{
+  grid-column:1/11;font-size:clamp(3.2rem,12.5vw,11rem);font-weight:700;
+  line-height:.82;letter-spacing:-.045em;text-transform:uppercase;margin:.3rem 0
+}
+h1 .r{color:var(--red)}
+
+h2{font-size:clamp(1.3rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+p.body{font-size:.95rem;line-height:1.5;max-width:42ch}
+
+/* RGB channel split on hover — the corruption */
+.split{position:relative;display:inline-block}
+.split::before,.split::after{
+  content:attr(data-t);position:absolute;inset:0;pointer-events:none;opacity:0;
+  transition:opacity .1s
+}
+.split::before{color:#ff0040;transform:translate(-3px,-1px);mix-blend-mode:multiply}
+.split::after{color:#00e5ff;transform:translate(3px,1px);mix-blend-mode:multiply}
+.split:hover::before,.split:hover::after{opacity:1}
+.split:hover{animation:judder .22s steps(2) infinite}
+@keyframes judder{0%{transform:none}50%{transform:translate(-2px,1px)}100%{transform:translate(1px,-1px)}}
+
+/* datamosh block */
+.mosh{grid-column:1/7;position:relative;overflow:hidden;background:var(--ink);min-height:clamp(240px,32vw,400px)}
+.mosh canvas{width:100%;height:100%;display:block;position:absolute;inset:0}
+.mosh .cap{position:absolute;left:0;bottom:0;background:var(--red);color:var(--paper);
+  padding:.4rem .7rem;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;z-index:2}
+
+.block{grid-column:7/13}
+.swatch{height:clamp(58px,7vw,92px)}
+.sw-red{background:var(--red)} .sw-ink{background:var(--ink)}
+
+/* jitter on scroll */
+.jit{will-change:transform}
+
+.numbers{grid-column:1/13;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--gut);margin:1rem 0}
+.num{border-top:2px solid var(--ink);padding-top:.5rem}
+.num b{display:block;font-size:clamp(2rem,4.6vw,3.4rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.num span{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.num.red b{color:var(--red)}
+
+.link{
+  display:inline-block;border:2px solid var(--ink);padding:.85rem 1.4rem;min-height:48px;
+  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-top:1rem
+}
+.link:hover{background:var(--red);border-color:var(--red);color:var(--paper)}
+.link:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+
+footer{grid-column:1/13;border-top:2px solid var(--ink);padding-top:.7rem;margin-top:2.4rem;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+
+@media (max-width:800px){
+  h1{grid-column:1/13}
+  .mosh,.block{grid-column:1/13}
+}
+@media (prefers-reduced-motion:reduce){
+  .split:hover{animation:none}
+  .jit{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="g">
+    <div class="meta" style="grid-column:1/7">Signal / Noise — Design Bureau</div>
+    <div class="meta" style="grid-column:7/13;text-align:right">Guildford · Est. 2026 · No. 07</div>
+    <div class="rule"></div>
+
+    <h1 class="jit">Order<br><span class="split r" data-t="&amp;">&amp;</span><br>Entropy</h1>
+
+    <div class="block" style="align-self:end">
+      <p class="body">A grid is a promise about where things will be.
+        Breaking it on purpose is only interesting if the promise was
+        credible in the first place.</p>
+      <p class="body" style="margin-top:.8rem">Hover anything red.</p>
+      <a class="link split" data-t="Corrupt the layout" href="#work">Corrupt the layout</a>
+    </div>
+
+    <div class="rule red"></div>
+
+    <figure class="mosh jit" id="work">
+      <canvas id="mosh" aria-label="Datamoshed wireframe render"></canvas>
+      <figcaption class="cap">Fig. 07 — Lattice / displaced</figcaption>
+    </figure>
+
+    <div class="block">
+      <h2 class="split" data-t="Helvetica is not neutral.">Helvetica is not neutral.</h2>
+      <p class="body" style="margin-top:.8rem">It is a specific argument about
+        clarity, made in 1957 and repeated so often it started to sound like
+        the absence of an argument. We like it. We also like watching it
+        come apart.</p>
+      <div class="g" style="grid-template-columns:repeat(2,1fr);margin-top:1rem">
+        <div class="swatch sw-red"></div>
+        <div class="swatch sw-ink"></div>
+      </div>
+      <div class="meta" style="margin-top:.5rem">E2001A / 000000 / FFFFFF</div>
+    </div>
+
+    <div class="numbers">
+      <div class="num"><b>12</b><span>Columns</span></div>
+      <div class="num"><b>3</b><span>Colours</span></div>
+      <div class="num red"><b>1</b><span>Typeface</span></div>
+      <div class="num red"><b>∞</b><span>Ways to break it</span></div>
+    </div>
+
+    <footer>
+      <span class="meta">Signal / Noise © 2026</span>
+      <a class="meta split" data-t="← Back to the lab" href="../index.html">← Back to the lab</a>
+    </footer>
+  </div>
+</div>
+
+<script src="q3d.js"></script>
+<script>
+(function () {
+  var reduce = Q3D.reducedMotion;
+
+  /* Datamosh: render a wireframe, then periodically displace horizontal
+     slices of the buffer. Reading the canvas back and re-blitting it is
+     what produces the smeared-codec look. */
+  var canvas = document.getElementById("mosh"), ctx = canvas.getContext("2d");
+  var scene = new Q3D.Scene(canvas, {
+    shape: Q3D.cubeLattice(4, 1.8),
+    stroke: "#ffffff", nodeColour: "#e2001a", nodeSize: 2.6,
+    lineWidth: 1.2, scale: 1, speed: 0.8
+  });
+
+  function mosh() {
+    var h = canvas.height, w = canvas.width;
+    var slices = 6 + Math.floor(Math.random() * 8);
+    for (var i = 0; i < slices; i++) {
+      var y = Math.random() * h, sh = 4 + Math.random() * 26;
+      var dx = (Math.random() - 0.5) * 70;
+      try {
+        var band = ctx.getImageData(0, y, w, sh);
+        ctx.putImageData(band, dx, y);
+      } catch (e) { return; }   // tainted canvas, nothing to do
+    }
+  }
+
+  scene.draw();
+  if (!reduce) {
+    (function loop() {
+      scene.spin += 0.004;
+      scene.draw();
+      if (Math.random() < 0.06) mosh();
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    mosh();
+  }
+
+  /* Scroll jitter: sections nudge out of alignment as they move, then
+     settle. Small amplitude — enough to feel unstable, not enough to
+     make the page hard to read. */
+  if (!reduce) {
+    var targets = document.querySelectorAll(".jit"), ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var s = window.scrollY;
+        targets.forEach(function (el, i) {
+          var n = Math.sin(s * 0.021 + i * 2.1);
+          var jump = Math.abs(n) > 0.985 ? (Math.random() - 0.5) * 9 : 0;
+          el.style.transform = "translate3d(" + (n * 2.2 + jump).toFixed(2) + "px,0,0)";
+        });
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

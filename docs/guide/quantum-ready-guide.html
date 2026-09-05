@@ -1,0 +1,837 @@
+<title>Quantum Ready Operating Guide</title>
+<style>
+/* A print document: one committed light treatment, since a PDF has one
+   appearance. Accent and neutrals match the scanner workflow page so the
+   whole set reads as one company. */
+:root{
+  --ink:#111a1d;
+  --body:#33444a;
+  --muted:#5d7076;
+  --faint:#7b8c92;
+  --rule:#cfd9da;
+  --rule-soft:#e4ebec;
+  --paper:#ffffff;
+  --tint:#f2f6f6;
+  --signal:#0d6d66;
+  --signal-soft:#e2efee;
+  --alert:#a8352b;
+  --alert-soft:#fbecea;
+  --warn:#8a5a08;
+  --warn-soft:#faf1de;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@page{ size:A4; margin:16mm 15mm 18mm; }
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{
+  margin:0;background:var(--paper);color:var(--body);
+  font-family:var(--sans);font-size:10.4pt;line-height:1.6;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+p{margin:0 0 .62rem;max-width:70ch}
+strong{color:var(--ink);font-weight:640}
+em{font-style:italic}
+code{
+  font-family:var(--mono);font-size:.88em;background:var(--tint);
+  border:1px solid var(--rule-soft);border-radius:3px;padding:.06em .3em;color:var(--ink);
+}
+
+/* ── cover ─────────────────────────────────────────────────────────── */
+.cover{
+  height:250mm;display:flex;flex-direction:column;justify-content:center;
+  page-break-after:always;
+}
+.cover .brand{
+  font-family:var(--mono);font-size:8.5pt;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--signal);margin-bottom:2.2rem;
+}
+.cover h1{
+  font-size:34pt;line-height:1.02;letter-spacing:-.03em;font-weight:700;
+  color:var(--ink);margin:0 0 1.1rem;
+}
+.cover .sub{font-size:13pt;color:var(--body);max-width:52ch;margin:0 0 3rem;line-height:1.5}
+.cover .meta{
+  font-family:var(--mono);font-size:8.5pt;color:var(--muted);line-height:2;
+  border-top:2px solid var(--ink);padding-top:1rem;
+}
+
+/* ── contents ──────────────────────────────────────────────────────── */
+.toc{page-break-after:always}
+.toc ol{list-style:none;counter-reset:t;margin:0;padding:0}
+.toc li{
+  counter-increment:t;display:flex;gap:.9rem;align-items:baseline;
+  padding:.5rem 0;border-bottom:1px solid var(--rule-soft);
+}
+.toc li::before{
+  content:counter(t,decimal-leading-zero);font-family:var(--mono);font-size:8.5pt;
+  color:var(--signal);font-weight:700;min-width:1.8rem;
+}
+.toc .t{color:var(--ink);font-weight:600;font-size:11pt}
+.toc .d{color:var(--muted);font-size:9pt;margin-left:auto;text-align:right;max-width:30ch}
+
+/* ── sections ──────────────────────────────────────────────────────── */
+section{page-break-before:always}
+section.flow{page-break-before:auto}
+.sec-num{
+  font-family:var(--mono);font-size:8.5pt;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--signal);font-weight:700;margin:0 0 .35rem;
+}
+h2{
+  font-size:20pt;line-height:1.1;letter-spacing:-.024em;font-weight:680;color:var(--ink);
+  margin:0 0 .5rem;padding-bottom:.55rem;border-bottom:2px solid var(--ink);
+}
+.intro{font-size:11pt;color:var(--body);margin:0 0 1.5rem;max-width:66ch}
+h3{
+  font-size:12.5pt;font-weight:660;letter-spacing:-.012em;color:var(--ink);
+  margin:1.5rem 0 .45rem;page-break-after:avoid;
+}
+h4{
+  font-family:var(--mono);font-size:8.5pt;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;margin:1.3rem 0 .5rem;page-break-after:avoid;
+}
+
+/* ── numbered do-this-then-that steps ──────────────────────────────── */
+.steps{list-style:none;counter-reset:s;margin:.5rem 0 1rem;padding:0}
+.steps>li{
+  counter-increment:s;position:relative;padding:0 0 .9rem 2.4rem;
+  page-break-inside:avoid;
+}
+.steps>li::before{
+  content:counter(s);position:absolute;left:0;top:0;
+  width:1.6rem;height:1.6rem;border-radius:50%;
+  background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-size:8.5pt;font-weight:700;
+  display:grid;place-items:center;
+}
+.steps>li>strong:first-child{display:block;color:var(--ink);margin-bottom:.15rem}
+
+ul.plain{margin:.3rem 0 .8rem;padding-left:1.15rem}
+ul.plain li{margin-bottom:.32rem}
+
+/* ── command blocks ────────────────────────────────────────────────── */
+pre{
+  margin:.45rem 0 .9rem;background:#0f1b1e;border-radius:5px;
+  padding:.8rem 1rem;overflow-x:auto;
+  font-family:var(--mono);font-size:8.4pt;line-height:1.7;color:#dbe7e8;
+  page-break-inside:avoid;white-space:pre-wrap;word-break:break-word;
+}
+pre .c{color:#7fa39f}
+pre .p{color:#8fb4b0}
+pre b{color:#6fe3d2;font-weight:600}
+.term{
+  margin:.45rem 0 .9rem;background:var(--tint);border:1px solid var(--rule);border-radius:5px;
+  padding:.8rem 1rem;font-family:var(--mono);font-size:8pt;line-height:1.65;color:var(--ink);
+  white-space:pre-wrap;page-break-inside:avoid;
+}
+.term .g{color:var(--signal)}
+.term .r{color:var(--alert)}
+.term .m{color:var(--muted)}
+
+/* ── callouts ──────────────────────────────────────────────────────── */
+.box{
+  margin:.9rem 0;padding:.85rem 1.05rem;border-radius:5px;
+  background:var(--tint);border-left:3px solid var(--signal);
+  page-break-inside:avoid;font-size:9.7pt;
+}
+.box .lbl{
+  display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--signal);font-weight:700;margin-bottom:.28rem;
+}
+.box p:last-child{margin-bottom:0}
+.box.warn{background:var(--warn-soft);border-left-color:var(--warn)}
+.box.warn .lbl{color:var(--warn)}
+.box.stop{background:var(--alert-soft);border-left-color:var(--alert)}
+.box.stop .lbl{color:var(--alert)}
+
+/* ── tables ────────────────────────────────────────────────────────── */
+table{border-collapse:collapse;width:100%;margin:.6rem 0 1rem;font-size:9.5pt;
+  page-break-inside:avoid}
+th{
+  text-align:left;font-family:var(--mono);font-size:7.8pt;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;
+  border-bottom:1.5px solid var(--ink);padding:.4rem .6rem .35rem;
+}
+td{padding:.45rem .6rem;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+td:first-child{color:var(--ink);font-weight:600}
+td code{font-size:.85em}
+tr{page-break-inside:avoid}
+
+/* ── screenshots ───────────────────────────────────────────────────── */
+figure{margin:.8rem 0 1.1rem;page-break-inside:avoid}
+figure img{
+  width:100%;display:block;border:1px solid var(--rule);border-radius:5px;
+}
+figcaption{
+  font-family:var(--mono);font-size:7.8pt;color:var(--muted);margin-top:.4rem;
+  letter-spacing:.03em;
+}
+
+/* ── grade key ─────────────────────────────────────────────────────── */
+.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin:.7rem 0 1rem}
+.grades div{
+  border:1px solid var(--rule);border-radius:5px;padding:.55rem .7rem;font-size:9pt;
+}
+.grades .g{font-family:var(--mono);font-weight:700;font-size:11pt;display:block;margin-bottom:.1rem}
+.g-a{color:var(--signal)} .g-c{color:var(--warn)} .g-f{color:var(--alert)}
+
+/* ── the pitch / script blocks ─────────────────────────────────────── */
+.script{
+  margin:.6rem 0 1rem;padding:.9rem 1.1rem;border:1px solid var(--rule);
+  border-radius:5px;background:var(--paper);page-break-inside:avoid;
+}
+.script .who{
+  font-family:var(--mono);font-size:7.8pt;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--signal);font-weight:700;margin-bottom:.3rem;
+}
+.script p{margin:0 0 .5rem;font-style:italic;color:var(--ink)}
+.script p:last-child{margin-bottom:0}
+
+.qa{margin:.5rem 0 1.1rem;page-break-inside:avoid}
+.qa .q{color:var(--alert);font-weight:640;margin:0 0 .2rem;font-size:10pt}
+.qa .a{margin:0 0 .9rem}
+
+footer{
+  margin-top:2.5rem;padding-top:.8rem;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:7.6pt;color:var(--faint);
+  display:flex;justify-content:space-between;gap:1rem;
+}
+</style>
+
+<!-- ══════════════════ COVER ══════════════════ -->
+<div class="cover">
+  <div class="brand">Quantum Ready · Guildford, Surrey</div>
+  <h1>Operating<br>Guide</h1>
+  <p class="sub">How to run the scanner, read the report it produces,
+    and turn it into paying client work. Written to be followed start to
+    finish with nothing assumed.</p>
+  <div class="meta">
+    Version 1.0<br>
+    For: Darshan Chabbi, Kiran Pun, Bhanu Teja Battula<br>
+    Covers: setup · running a scan · reading results · selling the service
+  </div>
+</div>
+
+<!-- ══════════════════ CONTENTS ══════════════════ -->
+<div class="toc">
+  <p class="sec-num">Contents</p>
+  <h2>What's in here</h2>
+  <ol>
+    <li><span class="t">What this thing actually is</span><span class="d">In plain English</span></li>
+    <li><span class="t">Setting it up, once</span><span class="d">Python, then the code</span></li>
+    <li><span class="t">The easy way — the dashboard</span><span class="d">Type a domain into a box</span></li>
+    <li><span class="t">The command-line way</span><span class="d">One line, more control</span></li>
+    <li><span class="t">What happens while it runs</span><span class="d">The six stages, live</span></li>
+    <li><span class="t">Reading the report</span><span class="d">What every number means</span></li>
+    <li><span class="t">Saving and sending it</span><span class="d">Four output formats</span></li>
+    <li><span class="t">Selling this to clients</span><span class="d">Who, what to say, what to charge</span></li>
+    <li><span class="t">The line you must not cross</span><span class="d">Permission before scanning</span></li>
+    <li><span class="t">When something breaks</span><span class="d">Errors and their fixes</span></li>
+    <li><span class="t">Quick reference</span><span class="d">Every command on one page</span></li>
+  </ol>
+</div>
+
+<!-- ══════════════════ 1 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 01</p>
+  <h2>What this thing actually is</h2>
+  <p class="intro">You give it a company's web address. It tells you how badly that
+    company would be hurt by a quantum computer, and what to fix first.</p>
+
+  <p>Here is the problem it exists to solve, in one paragraph.</p>
+
+  <p>Almost all encryption on the internet today is protected by maths that a
+    quantum computer can solve. Not <em>weaken</em> — <strong>solve</strong>. When that machine
+    arrives, everything protected by RSA or elliptic-curve cryptography becomes readable.
+    And because attackers can record encrypted traffic <em>today</em> and decrypt it later,
+    data that must stay secret for ten years is already exposed, right now, before the
+    machine exists. That is called <strong>harvest now, decrypt later</strong>.</p>
+
+  <p>The UK's National Cyber Security Centre has set three dates: a full inventory of
+    your cryptography by <strong>2028</strong>, your highest-priority systems migrated by
+    <strong>2031</strong>, and everything done by <strong>2035</strong>. Those dates turn this
+    from an interesting idea into a job somebody has to do.</p>
+
+  <h3>What the scanner does about it</h3>
+  <p>It connects to a company's public servers and records what they actually
+    negotiate — not what a policy document claims. From that it produces a risk score,
+    a list of specific problems, an inventory of every algorithm in use, and a
+    prioritised plan.</p>
+
+  <div class="box">
+    <span class="lbl">The one sentence that sells it</span>
+    <p>Everyone else sends a questionnaire. You send evidence — measured from
+      the outside, in about ten seconds, before the client has signed anything.</p>
+  </div>
+
+  <h3>Two ways to run it</h3>
+  <table>
+    <tr><th>Way</th><th>Best for</th><th>Section</th></tr>
+    <tr><td>The dashboard</td><td>Demos, client meetings, anyone who dislikes terminals.
+      You type a domain into a box on a web page.</td><td>Section 3</td></tr>
+    <tr><td>The command line</td><td>Saving reports to files, scanning many domains,
+      anything repeatable.</td><td>Section 4</td></tr>
+  </table>
+  <p>They run the same engine and produce the same results. Start with the dashboard.</p>
+</section>
+
+<!-- ══════════════════ 2 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 02</p>
+  <h2>Setting it up, once</h2>
+  <p class="intro">Two things to install: Python, then the scanner itself.
+    You do this once per computer, and never again.</p>
+
+  <div class="box">
+    <span class="lbl">Good news</span>
+    <p>The scanner has <strong>zero dependencies</strong>. There is no long list of
+      libraries to install and nothing that can break next month. If you have Python,
+      you have everything.</p>
+  </div>
+
+  <h3>Step one — install Python</h3>
+  <ol class="steps">
+    <li><strong>Check whether you already have it.</strong>
+      Open <strong>Terminal</strong> (Mac) or <strong>PowerShell</strong> (Windows) and type:
+      <pre>python3 --version</pre>
+      If you see <code>Python 3.9</code> or higher, skip to step two.
+      On Windows you may need <code>python --version</code> instead.</li>
+    <li><strong>If you don't have it,</strong> download it from
+      <code>python.org/downloads</code> and run the installer.
+      <strong>On Windows, tick "Add Python to PATH"</strong> on the first screen —
+      if you miss it, nothing below will work.</li>
+    <li><strong>Close and reopen your terminal,</strong> then check the version again.</li>
+  </ol>
+
+  <h3>Step two — get the scanner</h3>
+  <p>If you have the code as a folder already, just move it somewhere sensible and
+    skip ahead. To pull it from GitHub:</p>
+  <pre><span class="c"># download the code</span>
+git clone https://github.com/kiranpun/agile-mosca-pqc.git
+
+<span class="c"># move into the folder — every command later assumes you are here</span>
+cd agile-mosca-pqc</pre>
+
+  <div class="box warn">
+    <span class="lbl">Windows PowerShell: one important difference</span>
+    <p>PowerShell does not accept <code>&amp;&amp;</code> between commands. If you copy a
+      line containing <code>&amp;&amp;</code> from anywhere, it will fail. Run each command
+      on its own line instead. Every command in this guide is already written one per line.</p>
+  </div>
+
+  <h3>Step three — check it works</h3>
+  <pre>python3 -m quantumready --help</pre>
+  <p>You should see a list of commands: <code>scan</code>, <code>serve</code>,
+    <code>study</code>, <code>mosca</code>, <code>algorithms</code>. If you do,
+    setup is finished and you never have to do it again.</p>
+
+  <div class="box warn">
+    <span class="lbl">If it says "No module named quantumready"</span>
+    <p>You are in the wrong folder. The command only works from inside
+      <code>agile-mosca-pqc</code> — the folder that contains a folder called
+      <code>quantumready</code>. Type <code>cd</code> and the path to it, then try again.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 3 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 03</p>
+  <h2>The easy way — the dashboard</h2>
+  <p class="intro">This is where you put the domain. It's a web page with a box on it.
+    Use this in front of clients.</p>
+
+  <h3>Start it</h3>
+  <pre>python3 -m quantumready serve</pre>
+  <p>Your browser opens automatically at <code>http://127.0.0.1:8080</code>.
+    If it doesn't, open that address yourself. Leave the terminal window open —
+    closing it stops the dashboard.</p>
+
+  <figure>
+    <img src="{{DASH}}" alt="The Quantum.Ready dashboard: a form with a company domain field, organisation name, sector, data shelf life, migration time, threat timeline and max hosts, above a Run scan button.">
+    <figcaption>The dashboard. The domain goes in the top box — everything else has a sensible default.</figcaption>
+  </figure>
+
+  <h3>Fill it in</h3>
+  <table>
+    <tr><th>Field</th><th>What to put</th><th>Needed?</th></tr>
+    <tr><td>Company domain</td><td>Just the domain — <code>acme.co.uk</code>.
+      No <code>https://</code>, no <code>www</code>, no trailing slash.</td><td>Yes</td></tr>
+    <tr><td>Organisation name</td><td>The client's legal name. It appears at the top of
+      the report, so fill it in for anything you'll send.</td><td>No</td></tr>
+    <tr><td>Sector</td><td>Sets how long their data must stay secret. Healthcare, defence
+      and finance default to much longer than general.</td><td>No</td></tr>
+    <tr><td>Data shelf life</td><td>Years the data must stay confidential.
+      <strong>Use their longest legal retention obligation.</strong></td><td>No</td></tr>
+    <tr><td>Migration time</td><td>Years to actually migrate. Five is realistic for a
+      mid-size organisation; ten for anything with heavy legacy.</td><td>No</td></tr>
+    <tr><td>Threat timeline</td><td>When you assume a quantum computer arrives.
+      Leave on Central (2035) — that's the NCSC line, and it's defensible.</td><td>No</td></tr>
+    <tr><td>Max hosts</td><td>How many servers to check. Eight is fine. Raise it for
+      large estates, but the scan takes longer.</td><td>No</td></tr>
+  </table>
+
+  <p>Press <strong>Run scan</strong>. Progress appears live. Results appear on the
+    same page in about ten to sixty seconds depending on the size of the estate.</p>
+
+  <div class="box">
+    <span class="lbl">Stopping it</span>
+    <p>Click the terminal window and press <strong>Ctrl + C</strong>.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 4 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 04</p>
+  <h2>The command-line way</h2>
+  <p class="intro">Same engine, but it can write report files you can email.
+    This is what you'll use for real client work.</p>
+
+  <h3>The simplest possible scan</h3>
+  <pre>python3 -m quantumready scan <b>acme.co.uk</b></pre>
+  <p>Replace <code>acme.co.uk</code> with any domain. Results print in the terminal.
+    Nothing is saved.</p>
+
+  <h3>A real client scan, saved to files</h3>
+  <pre>python3 -m quantumready scan <b>acme.co.uk</b> \
+    --org "Acme Ltd" \
+    --sector finance \
+    --html-out acme-report.html \
+    --json-out acme-data.json</pre>
+
+  <div class="box warn">
+    <span class="lbl">On Windows, don't use the backslashes</span>
+    <p>The <code>\</code> at the end of a line means "continues below" on Mac and Linux
+      only. In PowerShell, put the whole thing on <strong>one long line</strong> with no
+      backslashes at all.</p>
+  </div>
+
+  <p>That writes <code>acme-report.html</code> into the folder you're in. Double-click
+    it to open it — that file is the thing you send the client.</p>
+
+  <h3>The options you'll actually use</h3>
+  <table>
+    <tr><th>Option</th><th>What it does</th></tr>
+    <tr><td><code>--org "Name"</code></td><td>Puts the client's name on the report.</td></tr>
+    <tr><td><code>--sector finance</code></td><td>Sets data shelf life. The full list:
+      <code>defence</code>, <code>education</code>, <code>finance</code>,
+      <code>general</code>, <code>government</code>, <code>healthcare</code>,
+      <code>insurance</code>, <code>legal</code>, <code>pharmaceutical</code>,
+      <code>retail</code>, <code>technology</code>.</td></tr>
+    <tr><td><code>--html-out FILE</code></td><td>Writes the report you send to clients.</td></tr>
+    <tr><td><code>--json-out FILE</code></td><td>Writes the raw data, for your own tooling.</td></tr>
+    <tr><td><code>--markdown-out FILE</code></td><td>Writes text for tickets and wikis.</td></tr>
+    <tr><td><code>--cbom-out FILE</code></td><td>Writes a CycloneDX cryptographic bill of materials.</td></tr>
+    <tr><td><code>--fast</code></td><td>Skips deep protocol probing. Roughly three times
+      quicker, slightly less detail. Good for demos.</td></tr>
+    <tr><td><code>--max-hosts 20</code></td><td>Checks more servers. Default is 12.</td></tr>
+    <tr><td><code>--no-ct</code></td><td>Skips Certificate Transparency host discovery.</td></tr>
+    <tr><td><code>--shelf-life 25</code></td><td>Sets data shelf life directly, in years.</td></tr>
+    <tr><td><code>--quiet</code></td><td>Hides the live progress output.</td></tr>
+  </table>
+
+  <h3>Two other commands worth knowing</h3>
+  <pre><span class="c"># the X + Y > Z deadline calculation on its own, no scanning</span>
+python3 -m quantumready mosca --shelf-life 25 --migration-years 5
+
+<span class="c"># what post-quantum tooling exists today</span>
+python3 -m quantumready algorithms</pre>
+</section>
+
+<!-- ══════════════════ 5 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 05</p>
+  <h2>What happens while it runs</h2>
+  <p class="intro">Six stages, in order, each feeding the next. This is the real output
+    from a real scan — so you know what normal looks like.</p>
+
+  <div class="term">Quantum.Ready — scanning example.com
+
+[  2%] discovery
+       Discovering hosts for example.com
+[ 10%] 2 host(s) to assess
+
+[ 12%] tls
+       Assessing TLS on 2 host(s)
+[ 34%] example.com: TLSv1.3, no PQC
+[ 57%] www.example.com: TLSv1.3, no PQC
+
+[ 60%] http
+       Checking HTTP security controls
+[ 76%] dns
+       Checking DNS posture for example.com
+[ 86%] licences
+       Inventorying components and licences
+[ 93%] analysis
+       Scoring and building the report
+
+[100%] done
+       Scan complete in 5.6s</div>
+
+  <h3>What each stage is doing</h3>
+  <table>
+    <tr><th>Stage</th><th>In plain English</th></tr>
+    <tr><td>1 · Discovery</td><td><strong>Finds every server they own.</strong> Public
+      certificate logs record every certificate ever issued for a domain, so they double
+      as a list of forgotten servers. Anything that no longer exists is dropped.</td></tr>
+    <tr><td>2 · TLS</td><td><strong>The important one.</strong> Connects to each server for
+      real and records what it actually agrees to — certificates, key sizes, protocol
+      versions, ciphers, and whether it supports post-quantum key exchange.</td></tr>
+    <tr><td>3 · HTTP</td><td><strong>Checks the web security headers</strong> — whether
+      HTTPS is enforced, whether HSTS is set.</td></tr>
+    <tr><td>4 · DNS</td><td><strong>Checks who can issue certificates and send email as
+      them</strong> — DNSSEC, CAA, SPF, DMARC. Email spoofing sits behind most invoice fraud.</td></tr>
+    <tr><td>5 · Licences</td><td><strong>Identifies third-party components</strong> and
+      their licence obligations.</td></tr>
+    <tr><td>6 · Analysis</td><td><strong>Now it judges.</strong> Everything above becomes
+      findings, a score, a deadline and a plan. Nothing is scored before this point.</td></tr>
+  </table>
+
+  <div class="box">
+    <span class="lbl">Why "no PQC" is the line that matters</span>
+    <p>In the output above, <code>no PQC</code> means that server does not support
+      post-quantum key exchange. Everything it sends today can be recorded now and read
+      later. That single phrase is the whole business in two words.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 6 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 06</p>
+  <h2>Reading the report</h2>
+  <p class="intro">Four things to look at, in this order: the scores, the deadline,
+    the findings, and the plan.</p>
+
+  <h3>1 — The two scores</h3>
+  <div class="term">  Security score      0/100  (grade F)
+  Quantum readiness   10/100  (grade F)
+  Findings            8 high  6 medium  2 low
+  Hosts assessed      2</div>
+
+  <p><strong>Security score</strong> is how they're doing today, against today's threats.
+    <strong>Quantum readiness</strong> is how they'd survive a quantum computer.
+    They are separate on purpose: an organisation can be perfectly secure today and
+    completely unready for 2035.</p>
+
+  <div class="grades">
+    <div><span class="g g-a">A / B</span>Genuinely good. Rare.</div>
+    <div><span class="g g-c">C / D</span>Typical. Real work needed.</div>
+    <div><span class="g g-f">E / F</span>Serious gaps. Most first scans land here.</div>
+  </div>
+
+  <div class="box warn">
+    <span class="lbl">Set expectations before you show a client their grade</span>
+    <p>Almost every first scan comes back E or F, because nobody has migrated yet.
+      An F is not an insult — it's the industry baseline in 2026. Say so before you show
+      the number, or you will put the client on the defensive in the first thirty seconds.</p>
+  </div>
+
+  <h3>2 — The deadline</h3>
+  <div class="term">  MOSCA: <span class="r">EXPOSED</span>   X(10) + Y(5) = 15 > Z(8.4)</div>
+  <p>Read it as: their data must stay secret <strong>10 years</strong>, migration takes
+    <strong>5 years</strong>, so they need <strong>15 years</strong> of protection — but only
+    <strong>8.4 years</strong> remain before the assumed threat date. The shortfall is
+    <strong>6.6 years</strong>. They are already late.</p>
+  <p>This is the number that creates urgency, and it's arithmetic rather than opinion,
+    which is exactly why it works in a boardroom.</p>
+
+  <h3>3 — The findings</h3>
+  <div class="term">   <span class="r">HIGH</span>      Q  Certificate key (RSA-2048) is breakable by a quantum computer
+           example.com:443
+   <span class="r">HIGH</span>      Q  No post-quantum key exchange offered
+           example.com:443
+   <span class="m">MEDIUM</span>       Certificate expires in 21 days
+           example.com:443</div>
+  <p>Each line is one problem on one server. The <strong>Q</strong> marks findings that
+    are specifically quantum-related, as opposed to ordinary security hygiene.
+    Both matter, and separating them lets you have two different conversations.</p>
+
+  <h3>4 — The plan</h3>
+  <div class="term">  Do these first
+    1. Enable HTTP Strict Transport Security      hours · immediate
+    2. Redirect all plaintext HTTP to HTTPS       hours · immediate
+    3. Enable hybrid post-quantum key exchange    days  · 2031
+    4. Plan certificate migration to ML-DSA       months · 2035</div>
+  <p>Ordered by impact, with an effort estimate and the deadline each one belongs to.
+    The first two are usually free and take an afternoon — <strong>which is your way in.
+    Give those away.</strong> Items three and four are the paid work.</p>
+</section>
+
+<!-- ══════════════════ 7 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 07</p>
+  <h2>Saving and sending it</h2>
+  <p class="intro">Four formats. You will mostly use the first.</p>
+  <table>
+    <tr><th>Format</th><th>Flag</th><th>Use it for</th></tr>
+    <tr><td>HTML</td><td><code>--html-out</code></td><td><strong>The client deliverable.</strong>
+      Self-contained — email the file, it opens in any browser. This is what you send.</td></tr>
+    <tr><td>Markdown</td><td><code>--markdown-out</code></td><td>Pasting into Jira, Notion,
+      Confluence or an internal wiki.</td></tr>
+    <tr><td>JSON</td><td><code>--json-out</code></td><td>Feeding your own tools, tracking a
+      client's score over time, building dashboards.</td></tr>
+    <tr><td>CycloneDX</td><td><code>--cbom-out</code></td><td>A cryptographic bill of materials
+      in an industry-standard format. Larger clients will specifically ask for this —
+      it's what the NCSC 2028 inventory requirement actually wants.</td></tr>
+  </table>
+
+  <h3>Turning the HTML into a PDF</h3>
+  <p>Open the HTML file in Chrome, press <strong>Ctrl + P</strong> (or <strong>⌘ + P</strong>),
+    and choose <strong>Save as PDF</strong>. Some clients want PDFs for their records.</p>
+
+  <div class="box">
+    <span class="lbl">Name files so you can find them in a year</span>
+    <p>Use <code>clientname-YYYY-MM-DD.html</code>. When you re-scan the same client in six
+      months, being able to show the improvement is a renewal conversation that writes itself.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 8 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 08</p>
+  <h2>Selling this to clients</h2>
+  <p class="intro">The scan is not the product. The scan is what gets you in the room.
+    The product is the migration work that follows.</p>
+
+  <h3>Who to approach, and why they have to listen</h3>
+  <p>Target organisations that hold data with a long confidentiality life <em>and</em> have
+    someone accountable for compliance. That combination is what converts.</p>
+  <table>
+    <tr><th>Who</th><th>Why they can't ignore it</th></tr>
+    <tr><td>NHS trusts</td><td>Patient records must stay confidential for decades.
+      Their shelf life alone puts them years past the deadline.</td></tr>
+    <tr><td>Local councils</td><td>Public accountability, statutory retention, and small
+      security teams. High need, low internal capacity.</td></tr>
+    <tr><td>Universities</td><td>Research data, large sprawling estates, and lots of
+      forgotten servers that discovery will find.</td></tr>
+    <tr><td>Listed companies</td><td>Board-level cyber disclosure duties. "We were told and
+      did nothing" is a governance problem, not just a technical one.</td></tr>
+    <tr><td>Legal &amp; financial firms</td><td>Client confidentiality obligations lasting
+      decades, plus regulators who already ask about cryptography.</td></tr>
+  </table>
+
+  <h3>The route from stranger to signed</h3>
+  <ol class="steps">
+    <li><strong>Scan first, ask second.</strong> Run the scan on a prospect before you
+      contact them — but read Section 9 first, because how you do this matters.</li>
+    <li><strong>Lead with one specific fact.</strong> Not "we do post-quantum consulting."
+      Instead: "your main web server doesn't support post-quantum key exchange, and your
+      certificates expire in 21 days." Specific beats generic every time.</li>
+    <li><strong>Give the report away free.</strong> It costs you ten seconds of compute.
+      It's the most persuasive marketing asset you will ever have, because it's about them.</li>
+    <li><strong>Fix something small for free.</strong> The top two findings are usually an
+      afternoon's work. Doing that buys enormous trust and costs almost nothing.</li>
+    <li><strong>Sell the inventory.</strong> The free scan only sees the outside. NCSC's 2028
+      requirement is a <em>complete</em> inventory — internal systems, VPNs, databases,
+      code signing. That's a paid engagement, and the scan proves you can do it.</li>
+    <li><strong>Sell the migration.</strong> The inventory produces a roadmap. The roadmap
+      produces years of work. This is where the actual revenue is.</li>
+  </ol>
+
+  <h3>What to say</h3>
+  <div class="script">
+    <div class="who">Cold email — keep it this short</div>
+    <p>Subject: Your certificates and the 2035 deadline</p>
+    <p>Hello [name] — I ran a passive check of [company]'s public web estate against
+      the NCSC's post-quantum migration timeline. Two things stood out: none of your
+      public servers currently offer post-quantum key exchange, and [specific second finding].</p>
+    <p>I've attached the full report — no charge, no obligation. If it's useful,
+      I'm happy to walk you through it for twenty minutes. If not, please ignore this
+      and keep the report.</p>
+  </div>
+
+  <div class="script">
+    <div class="who">The twenty-minute call — the only three points you need</div>
+    <p>"Encryption you're using today is recorded today and read later. So the clock
+      started before the machine exists."</p>
+    <p>"Your data has to stay secret for [X] years. Migration takes about [Y].
+      That's more time than you have left. Here's the arithmetic." — show the Mosca line</p>
+    <p>"The NCSC wants a full inventory by 2028. This scan covers your outside.
+      The inside is where the hard cases are, and that's what I'd help with."</p>
+  </div>
+
+  <h3>Objections you will get</h3>
+  <div class="qa">
+    <p class="q">"Quantum computers don't exist yet. This is years away."</p>
+    <p class="a">Agreed — and that's precisely why it's urgent. Encrypted traffic is being
+      recorded now to be decrypted later. If your data must stay secret for ten years,
+      you're already inside the window. Also, migration itself takes years; starting when
+      the machine arrives means finishing a decade late.</p>
+  </div>
+  <div class="qa">
+    <p class="q">"Can't we just use bigger keys?"</p>
+    <p class="a">No, and this is the single most common misunderstanding. RSA-15360 falls to
+      exactly the same algorithm as RSA-2048 — it just takes marginally longer. The migration
+      replaces the mathematics; it doesn't resize it. Anyone advising you to increase key
+      length has misunderstood the threat.</p>
+  </div>
+  <div class="qa">
+    <p class="q">"Our vendor says they've handled it."</p>
+    <p class="a">Excellent — then this scan will confirm it in ten seconds, and you'll have
+      evidence rather than an assurance. If they have handled it, we'll see post-quantum key
+      exchange on your endpoints. Shall we look?</p>
+  </div>
+  <div class="qa">
+    <p class="q">"We have no budget for this."</p>
+    <p class="a">Understood. The first two fixes in this report cost nothing but an
+      afternoon of a sysadmin's time — do those regardless. When 2028 inventory planning
+      reaches your agenda, you'll have a starting point and my number.</p>
+  </div>
+
+  <h3>How to structure what you charge</h3>
+  <div class="box warn">
+    <span class="lbl">You set these numbers, not me</span>
+    <p>The <em>shape</em> below is the standard consulting ladder and is sound. The actual
+      figures depend on your costs, your market and your confidence — decide them
+      deliberately rather than adopting a number from a document.</p>
+  </div>
+  <table>
+    <tr><th>Stage</th><th>What they get</th><th>Pricing shape</th></tr>
+    <tr><td>External scan</td><td>The report this tool produces</td>
+      <td><strong>Free.</strong> It's the lead magnet — never charge for it.</td></tr>
+    <tr><td>Readout call</td><td>Twenty minutes walking them through it</td>
+      <td><strong>Free.</strong> This is the sales conversation.</td></tr>
+    <tr><td>Full inventory</td><td>Internal systems, VPNs, code signing, databases —
+      the real NCSC 2028 deliverable</td><td>Fixed fee, scoped by estate size</td></tr>
+    <tr><td>Migration roadmap</td><td>Prioritised plan with costs and sequencing</td>
+      <td>Fixed fee, or bundled with the inventory</td></tr>
+    <tr><td>Migration delivery</td><td>Doing the work, or overseeing those who do</td>
+      <td>Day rate or retainer — this is the revenue</td></tr>
+    <tr><td>Annual re-assessment</td><td>Proof of progress for the board</td>
+      <td>Recurring. Highest-margin thing you'll sell.</td></tr>
+  </table>
+
+  <div class="box">
+    <span class="lbl">Your genuine advantage</span>
+    <p>Most competitors in this space sell a questionnaire and a slide deck. You arrive with
+      measurements taken from the client's own servers, before the first meeting. Lead with
+      that difference — it is the whole reason someone picks you.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 9 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 09</p>
+  <h2>The line you must not cross</h2>
+  <p class="intro">Read this before you scan anyone you don't have a relationship with.
+    Getting it wrong damages your reputation faster than the tool builds it.</p>
+
+  <p>Not all scanning is equal, and it's worth being precise rather than nervous.</p>
+
+  <table>
+    <tr><th>What</th><th>Standing</th></tr>
+    <tr><td>Reading Certificate Transparency logs and DNS records</td>
+      <td><strong>Entirely public.</strong> These are public registries. You're reading
+        published records, not touching their systems.</td></tr>
+    <tr><td>One HTTPS connection to a public web server</td>
+      <td><strong>Ordinary.</strong> This is exactly what a browser does when anyone visits
+        the site. A public web server exists to accept connections.</td></tr>
+    <tr><td>Full cipher enumeration across many hosts</td>
+      <td><strong>Be careful.</strong> Dozens of connections in quick succession can trip
+        intrusion detection and will look like probing to a security team who don't know you.</td></tr>
+    <tr><td>Any paid engagement</td>
+      <td><strong>Get written authorisation, always.</strong> No exceptions, ever.</td></tr>
+  </table>
+
+  <div class="box stop">
+    <span class="lbl">The rules — follow these and you will not have a problem</span>
+    <p><strong>1.</strong> For paid work, get written permission naming the domains and the
+      dates, signed by someone with authority to give it. Put it in the contract.</p>
+    <p><strong>2.</strong> For prospecting, use <code>--fast</code> and a low
+      <code>--max-hosts</code>. It's lighter on their servers and there is no reason to
+      be heavy-handed before anyone has hired you.</p>
+    <p><strong>3.</strong> Never scan anything that isn't the public web estate. This tool
+      doesn't do intrusive testing — don't reach for tools that do without a contract.</p>
+    <p><strong>4.</strong> If anyone asks you to stop, stop immediately and confirm in writing.</p>
+    <p><strong>5.</strong> Send findings to the organisation privately. Never publish a named
+      company's weaknesses to make a marketing point.</p>
+  </div>
+
+  <p>The reputational risk is the one that will actually bite you. A security firm that
+    scans people uninvited and then emails about it can read as hostile — and the security
+    community talks. Frame every unsolicited report as a gift with no obligation, keep the
+    footprint light, and stop the moment anyone objects.</p>
+
+  <div class="box warn">
+    <span class="lbl">Say this plainly on your website and in every email</span>
+    <p>"We only scan domains you're authorised to have assessed." It sets the expectation,
+      it's true, and it costs you nothing.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ 10 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 10</p>
+  <h2>When something breaks</h2>
+  <p class="intro">Every error we've actually hit, and what fixes it.</p>
+  <table>
+    <tr><th>What you see</th><th>What it means and what to do</th></tr>
+    <tr><td><code>No module named quantumready</code></td>
+      <td>You're in the wrong folder. <code>cd</code> into <code>agile-mosca-pqc</code> —
+        the one containing a <code>quantumready</code> folder — and retry.</td></tr>
+    <tr><td><code>python3: command not found</code></td>
+      <td>On Windows try <code>python</code> instead. If that also fails, Python isn't
+        installed or wasn't added to PATH — reinstall and tick that box.</td></tr>
+    <tr><td><code>The token '&amp;&amp;' is not a valid statement separator</code></td>
+      <td>PowerShell. Run each command on its own line.</td></tr>
+    <tr><td>Scan hangs or times out</td>
+      <td>The domain may be unreachable or behind a firewall. Add
+        <code>--timeout 15</code>, or <code>--fast</code> to reduce the work.</td></tr>
+    <tr><td>Report says the certificate issuer is something unexpected</td>
+      <td>You're behind a corporate proxy that intercepts HTTPS. <strong>The results describe
+        the proxy, not the target.</strong> Re-run from a normal network. The scanner detects
+        and flags this rather than reporting the proxy's settings as the client's.</td></tr>
+    <tr><td><code>0 component(s) identified</code></td>
+      <td>Normal, not an error. The site bundles its assets, which hides component identity
+        from any external scan. It's noted in the report.</td></tr>
+    <tr><td>Everything comes back grade F</td>
+      <td>Also normal. Almost nobody has migrated yet — that's the business opportunity,
+        not a bug.</td></tr>
+  </table>
+</section>
+
+<!-- ══════════════════ 11 ══════════════════ -->
+<section>
+  <p class="sec-num">Section 11</p>
+  <h2>Quick reference</h2>
+  <p class="intro">Everything on one page. Print this one and keep it by the desk.</p>
+
+  <h4>Setup, once</h4>
+  <pre>python3 --version
+git clone https://github.com/kiranpun/agile-mosca-pqc.git
+cd agile-mosca-pqc
+python3 -m quantumready --help</pre>
+
+  <h4>The dashboard — for demos and client meetings</h4>
+  <pre>python3 -m quantumready serve
+<span class="c"># then open http://127.0.0.1:8080 and type the domain in the top box</span>
+<span class="c"># Ctrl+C in the terminal to stop</span></pre>
+
+  <h4>A quick look at any domain</h4>
+  <pre>python3 -m quantumready scan acme.co.uk --fast</pre>
+
+  <h4>A full client scan, saved and ready to send</h4>
+  <pre>python3 -m quantumready scan acme.co.uk --org "Acme Ltd" --sector finance --html-out acme-2026-08-15.html</pre>
+
+  <h4>Every output format at once</h4>
+  <pre>python3 -m quantumready scan acme.co.uk --html-out r.html --json-out r.json --markdown-out r.md --cbom-out cbom.json</pre>
+
+  <h4>The deadline calculation alone</h4>
+  <pre>python3 -m quantumready mosca --shelf-life 25 --migration-years 5</pre>
+
+  <h4>The numbers to remember</h4>
+  <table>
+    <tr><th>Number</th><th>What it is</th></tr>
+    <tr><td>0 bits</td><td>RSA's security against a quantum computer, at any key size</td></tr>
+    <tr><td>2028</td><td>NCSC deadline for a complete cryptographic inventory</td></tr>
+    <tr><td>2031</td><td>NCSC deadline for migrating highest-priority systems</td></tr>
+    <tr><td>2035</td><td>NCSC deadline for completing migration</td></tr>
+    <tr><td>X + Y &gt; Z</td><td>Mosca's inequality. Shelf life plus migration time
+      against time remaining. If it's true, they're already late.</td></tr>
+    <tr><td>FIPS 203/204/205</td><td>The NIST post-quantum standards: ML-KEM, ML-DSA, SLH-DSA</td></tr>
+  </table>
+
+  <footer>
+    <span>Quantum Ready · Operating Guide v1.0</span>
+    <span>Units 56–58 SETsquared Surrey, Guildford GU2 7YG</span>
+  </footer>
+</section>

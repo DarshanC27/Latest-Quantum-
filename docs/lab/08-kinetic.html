@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SHOR — kinetic type</title>
+<style>
+/* 08 — KINETIC TYPE ONLY
+   No images, no illustration, no canvas. Everything you look at is a
+   letterform. Scale, tracking and weight do all the work, with one neon
+   to mark the places that matter. */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0a0a0a;--paper:#fafafa;--neon:#d0ff00}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);overflow-x:hidden;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-variant-ligatures:none;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--neon);color:var(--ink)}
+
+section{padding:clamp(4rem,14vh,10rem) clamp(1rem,4vw,3rem);position:relative}
+
+/* hero — one word, three letters visible */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  overflow:hidden;padding-inline:0
+}
+.huge{
+  font-size:min(46vw,54vh);font-weight:800;line-height:.74;letter-spacing:-.06em;
+  white-space:nowrap;margin-left:-.04em;
+  transform-origin:left center
+}
+.huge .n{color:var(--neon)}
+.hero .under{
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding:1.4rem clamp(1rem,4vw,3rem) 0;
+  font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;font-weight:700
+}
+
+/* letters that spread on hover */
+.spread{display:inline-block;cursor:default}
+.spread span{display:inline-block;transition:transform .5s cubic-bezier(.2,1,.3,1),color .5s}
+.spread:hover span{color:var(--neon)}
+.spread:hover span:nth-child(odd){transform:translateY(-.1em) rotate(-4deg)}
+.spread:hover span:nth-child(even){transform:translateY(.1em) rotate(4deg)}
+.spread.wide:hover span{letter-spacing:.16em}
+
+/* scroll-scaled statement */
+.scaler{font-weight:800;line-height:.9;letter-spacing:-.04em;
+  font-size:clamp(2rem,var(--s,6vw),16rem);transition:font-size .1s linear;max-width:16ch}
+.scaler .n{color:var(--neon)}
+
+.stack{font-weight:800;letter-spacing:-.045em;line-height:.86}
+.stack div{font-size:clamp(2.2rem,10vw,8rem);white-space:nowrap;overflow:hidden}
+.stack div:nth-child(2){padding-left:8vw}
+.stack div:nth-child(3){padding-left:16vw}
+.stack div:nth-child(4){padding-left:24vw}
+.stack em{font-style:normal;color:var(--neon)}
+
+.marquee{overflow:hidden;white-space:nowrap;border-block:2px solid var(--ink);padding:.6rem 0}
+.marquee b{display:inline-block;font-size:clamp(1.6rem,5vw,4rem);font-weight:800;
+  letter-spacing:-.03em;animation:run 26s linear infinite}
+@keyframes run{to{transform:translateX(-50%)}}
+
+.body{font-size:clamp(1.1rem,2.2vw,1.8rem);line-height:1.35;max-width:24ch;font-weight:500}
+.body b{font-weight:800;background:var(--neon);padding:0 .12em}
+
+.tiny{font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;font-weight:700}
+
+.end{min-height:70svh;display:grid;place-items:center;text-align:center}
+.end a{font-size:clamp(1.6rem,7vw,5rem);font-weight:800;letter-spacing:-.03em;
+  border-bottom:.08em solid var(--ink);padding-bottom:.05em}
+.end a:hover{color:var(--neon);border-color:var(--neon)}
+.end a:focus-visible{outline:4px solid var(--neon);outline-offset:8px}
+
+@media (prefers-reduced-motion:reduce){
+  .marquee b{animation:none}
+  .spread span,.scaler{transition:none}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="huge" id="huge">SHO<span class="n">R</span></div>
+  <div class="under">
+    <span>Peter Shor · 1994 · Polynomial time</span>
+    <span>Scroll →</span>
+  </div>
+</section>
+
+<section>
+  <p class="tiny" style="margin-bottom:1.4rem">What it does</p>
+  <div class="scaler" id="scaler">Factors your keys in <span class="n">minutes</span>.</div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <b>RSA · DSA · DIFFIE-HELLMAN · ECDSA · ECDH · ED25519 · X25519 ·
+     RSA · DSA · DIFFIE-HELLMAN · ECDSA · ECDH · ED25519 · X25519 · </b>
+</div>
+
+<section>
+  <p class="tiny" style="margin-bottom:1.4rem">Hover each line</p>
+  <div class="stack">
+    <div class="spread" data-text="NOT"></div>
+    <div class="spread wide" data-text="WEAKENED"></div>
+    <div class="spread" data-text="—"></div>
+    <div class="spread" data-text="BROKEN"></div>
+  </div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:clamp(2rem,5vw,4rem)">
+  <p class="body">A larger key buys you <b>nothing</b>. RSA-15360 falls to
+    the same algorithm as RSA-2048, only marginally later.</p>
+  <p class="body">Grover halves your symmetric strength. That is survivable.
+    Shor takes public-key security to <b>zero</b>. That is not.</p>
+  <p class="body">The deadline is not when the machine arrives. It is that
+    date <b>minus</b> how long your data must stay secret.</p>
+</section>
+
+<section class="end">
+  <div>
+    <p class="tiny" style="margin-bottom:1.6rem">Type is the whole design. No images were used.</p>
+    <a href="../index.html">← Back to the lab</a>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Wrap each character so it can move independently on hover.
+  document.querySelectorAll(".spread").forEach(function (el) {
+    var text = el.getAttribute("data-text") || el.textContent;
+    el.textContent = "";
+    text.split("").forEach(function (ch) {
+      var s = document.createElement("span");
+      s.textContent = ch;
+      if (ch === "—") s.className = "n";
+      el.appendChild(s);
+    });
+  });
+
+  if (reduce) return;
+
+  var huge = document.getElementById("huge");
+  var scaler = document.getElementById("scaler");
+  var ticking = false;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var y = window.scrollY, vh = window.innerHeight;
+
+      // Hero word drifts left and shrinks slightly as you leave it.
+      var p = Math.min(1, y / vh);
+      huge.style.transform = "translateX(" + (-p * 26).toFixed(2) + "vw) scale(" + (1 - p * 0.14).toFixed(3) + ")";
+
+      // Statement scales with its own position in the viewport.
+      var r = scaler.getBoundingClientRect();
+      var t = 1 - Math.min(1, Math.max(0, (r.top + r.height / 2) / vh));
+      scaler.style.setProperty("--s", (3 + t * 9).toFixed(2) + "vw");
+
+      ticking = false;
+    });
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

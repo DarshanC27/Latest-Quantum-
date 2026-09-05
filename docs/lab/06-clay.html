@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOFTQUBIT — claymorphic pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* 06 — CLAYMORPHIC 3D
+   Extruded soft shapes: thick outlines, double inset highlights, chunky
+   drop shadows, pastel. Nothing is a flat rectangle and everything
+   squashes when you touch it. */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#3b2f4a;--paper:#f6efff;
+  --mint:#a8e6cf;--peach:#ffc9a8;--lilac:#c9b6ff;--butter:#ffe6a1;--sky:#a8d8ff;
+  --stroke:3px solid var(--ink);
+}
+body{
+  background:var(--paper);color:var(--ink);overflow-x:hidden;
+  font-family:"Baloo 2",ui-rounded,system-ui,sans-serif;font-weight:600;
+  background-image:radial-gradient(circle at 12% 18%,rgba(201,182,255,.42),transparent 42%),
+                   radial-gradient(circle at 88% 72%,rgba(168,230,207,.42),transparent 42%);
+}
+a{color:inherit;text-decoration:none}
+
+.wrap{max-width:1120px;margin:0 auto;padding:clamp(2.4rem,6vw,5rem) 1.2rem 5rem}
+header{text-align:center;margin-bottom:clamp(2.4rem,6vw,4rem)}
+h1{font-size:clamp(2.4rem,7vw,4.6rem);font-weight:800;line-height:1.02;letter-spacing:-.02em}
+.sub{max-width:46ch;margin:.9rem auto 0;font-size:1.06rem;font-weight:600;opacity:.72;line-height:1.5}
+
+/* the clay recipe: thick outline + layered inset lights + hard offset shadow */
+.clay{
+  border:var(--stroke);border-radius:34px;
+  box-shadow:
+    inset 0 -9px 0 rgba(0,0,0,.09),
+    inset 0 9px 0 rgba(255,255,255,.7),
+    0 12px 0 var(--ink),
+    0 22px 40px rgba(59,47,74,.24);
+  transition:transform .34s cubic-bezier(.34,1.56,.5,1),box-shadow .34s
+}
+.clay:hover{
+  transform:translateY(-8px) scale(1.022);
+  box-shadow:
+    inset 0 -9px 0 rgba(0,0,0,.09),
+    inset 0 9px 0 rgba(255,255,255,.75),
+    0 20px 0 var(--ink),
+    0 34px 56px rgba(59,47,74,.3)
+}
+.clay:active{transform:translateY(4px) scaleY(.96) scaleX(1.03);
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.09),inset 0 5px 0 rgba(255,255,255,.6),0 4px 0 var(--ink)}
+
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:clamp(1.4rem,3vw,2.2rem);align-items:stretch}
+.tier{padding:2rem 1.6rem;display:flex;flex-direction:column}
+.t1{background:var(--mint)} .t2{background:var(--butter)} .t3{background:var(--lilac)}
+
+.blobwrap{width:112px;height:112px;margin:0 auto 1.2rem;position:relative}
+.blobwrap canvas{width:100%;height:100%;display:block}
+
+.tier h2{font-size:1.5rem;font-weight:800;text-align:center}
+.price{text-align:center;font-size:2.9rem;font-weight:800;line-height:1;margin:.5rem 0 .2rem}
+.price small{font-size:.94rem;font-weight:600;opacity:.66}
+.per{text-align:center;font-size:.88rem;opacity:.66;margin-bottom:1.2rem}
+
+ul{list-style:none;flex:1;margin-bottom:1.4rem}
+li{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.7rem;font-size:.98rem;line-height:1.4}
+.tick{
+  flex:none;width:24px;height:24px;border:2.5px solid var(--ink);border-radius:50%;
+  display:grid;place-items:center;background:rgba(255,255,255,.62);
+  font-size:.76rem;font-weight:800;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)
+}
+
+.cta{
+  display:block;text-align:center;padding:.95rem 1.2rem;min-height:52px;
+  border:var(--stroke);border-radius:100px;background:#fff;font-weight:800;font-size:1rem;
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.09),inset 0 5px 0 rgba(255,255,255,.9),0 7px 0 var(--ink);
+  transition:transform .2s cubic-bezier(.34,1.56,.5,1),box-shadow .2s;cursor:pointer
+}
+.cta:hover{transform:translateY(-3px);box-shadow:inset 0 -5px 0 rgba(0,0,0,.09),inset 0 5px 0 rgba(255,255,255,.9),0 11px 0 var(--ink)}
+.cta:active{transform:translateY(4px) scaleY(.94);box-shadow:inset 0 -2px 0 rgba(0,0,0,.09),0 2px 0 var(--ink)}
+.cta:focus-visible{outline:4px solid var(--sky);outline-offset:4px}
+.t2 .cta{background:var(--peach)}
+
+.badge{
+  position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-3deg);
+  background:var(--peach);border:var(--stroke);border-radius:100px;padding:.32rem 1rem;
+  font-size:.76rem;font-weight:800;white-space:nowrap;
+  box-shadow:0 5px 0 var(--ink)
+}
+.tier{position:relative}
+
+footer{text-align:center;margin-top:3.4rem}
+
+@media (prefers-reduced-motion:reduce){.clay,.cta{transition:none}.clay:hover,.cta:hover{transform:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Squishy pricing<br>for serious cryptography</h1>
+    <p class="sub">Every plan includes the scanner, the report and someone
+      who will actually pick up the phone.</p>
+  </header>
+
+  <div class="tiers">
+    <section class="tier clay t1">
+      <div class="blobwrap"><canvas id="b1" aria-label="Rotating soft polyhedron"></canvas></div>
+      <h2>Curious</h2>
+      <div class="price">£0</div>
+      <div class="per">forever, genuinely</div>
+      <ul>
+        <li><span class="tick" aria-hidden="true">✓</span> External scan of your public estate</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Certificate &amp; TLS findings</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Post-quantum readiness score</li>
+        <li><span class="tick" aria-hidden="true">✓</span> HTML report you can forward</li>
+      </ul>
+      <button class="cta" type="button">Start scanning</button>
+    </section>
+
+    <section class="tier clay t2">
+      <span class="badge">Most squished</span>
+      <div class="blobwrap"><canvas id="b2" aria-label="Rotating soft torus"></canvas></div>
+      <h2>Committed</h2>
+      <div class="price">£<span id="p2">2,400</span></div>
+      <div class="per">fixed fee, per assessment</div>
+      <ul>
+        <li><span class="tick" aria-hidden="true">✓</span> Everything in Curious</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Internal systems, VPN, SSH, signing</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Cryptographic bill of materials</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Board-ready briefing</li>
+      </ul>
+      <button class="cta" type="button">Book it in</button>
+    </section>
+
+    <section class="tier clay t3">
+      <div class="blobwrap"><canvas id="b3" aria-label="Rotating soft lattice"></canvas></div>
+      <h2>All in</h2>
+      <div class="price">£<span id="p3">900</span><small>/mo</small></div>
+      <div class="per">retained, rolling</div>
+      <ul>
+        <li><span class="tick" aria-hidden="true">✓</span> Hands-on migration to hybrid ML-KEM</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Short-lived certs &amp; automation</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Continuous regression monitoring</li>
+        <li><span class="tick" aria-hidden="true">✓</span> Evidence pack for auditors</li>
+      </ul>
+      <button class="cta" type="button">Talk to us</button>
+    </section>
+  </div>
+
+  <footer>
+    <a class="cta" href="../index.html" style="display:inline-block;padding:.9rem 2rem">← Back to the lab</a>
+    <p class="sub" style="margin-top:1.4rem;font-size:.88rem">Prices shown are placeholders for the design study.</p>
+  </footer>
+</div>
+
+<script src="q3d.js"></script>
+<script>
+// Chunky, low-poly, slow — clay should feel heavy, not slick.
+var common = { lineWidth: 3, nodeSize: 3.4, scale: 0.78, speed: 0.55, distance: 3.4 };
+function make(id, shape, colour) {
+  new Q3D.Scene(document.getElementById(id),
+    Object.assign({ shape: shape, stroke: "#3b2f4a", nodeColour: colour }, common)
+  ).start();
+}
+make("b1", Q3D.icosahedron(1), "#ffffff");
+make("b2", Q3D.torus(0.72, 0.3, 12, 8), "#ffffff");
+make("b3", Q3D.cubeLattice(3, 1.5), "#ffffff");
+
+// Squash the whole card group when any price is hovered, so the page
+// feels like one soft object rather than three separate ones.
+document.querySelectorAll(".cta").forEach(function (b) {
+  b.addEventListener("click", function () {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var card = b.closest(".tier");
+    card.animate(
+      [{ transform: "scale(1)" }, { transform: "scale(.955) translateY(6px)" }, { transform: "scale(1)" }],
+      { duration: 420, easing: "cubic-bezier(.34,1.56,.5,1)" }
+    );
+  });
+});
+</script>
+</body>
+</html>

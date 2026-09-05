@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QBIT.SYS — retro terminal</title>
+<style>
+/* 05 — RETRO TERMINAL
+   A CRT: scanlines, phosphor bloom, boot sequence, typed commands.
+   The conceit only works if it is genuinely operable, so every command
+   has a clickable equivalent and the whole thing is keyboard-navigable. */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--p:#33ff77;--p-dim:#1c8f45;--bg:#020604;--amber:#ffb000}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--p);overflow-x:hidden;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace;
+  font-size:15px;line-height:1.55;
+  text-shadow:0 0 5px rgba(51,255,119,.55),0 0 18px rgba(51,255,119,.22);
+}
+a{color:var(--amber);text-decoration:none}
+a:hover{background:var(--amber);color:var(--bg);text-shadow:none}
+a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+::selection{background:var(--p);color:var(--bg);text-shadow:none}
+
+/* CRT overlays */
+.scan{position:fixed;inset:0;z-index:90;pointer-events:none;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.32) 2px 4px)}
+.flicker{position:fixed;inset:0;z-index:91;pointer-events:none;
+  background:rgba(51,255,119,.028);animation:flick 5.5s steps(2) infinite}
+@keyframes flick{0%,96%{opacity:.35}97%{opacity:.8}98%{opacity:.15}99%{opacity:.6}}
+.vignette{position:fixed;inset:0;z-index:89;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.72) 100%)}
+
+.screen{max-width:900px;margin:0 auto;padding:2rem 1.2rem 5rem;position:relative;z-index:10}
+
+pre.logo{font-size:clamp(.34rem,1.42vw,.78rem);line-height:1.12;margin-bottom:1.2rem;color:var(--p)}
+
+.line{white-space:pre-wrap;word-break:break-word}
+.dim{color:var(--p-dim);text-shadow:0 0 4px rgba(28,143,69,.5)}
+.amber{color:var(--amber);text-shadow:0 0 6px rgba(255,176,0,.5)}
+.cursor{display:inline-block;width:.62em;height:1.05em;background:var(--p);
+  vertical-align:-.16em;animation:blink 1.05s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.box{border:1px solid var(--p-dim);padding:1rem 1.1rem;margin:1.2rem 0}
+.box h2{font-size:1rem;font-weight:400;margin-bottom:.6rem}
+.box h2::before{content:"┌─ "}
+.box h2::after{content:" ─────────────────────────────"}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+td{padding:.24rem .5rem .24rem 0;vertical-align:top}
+td:first-child{color:var(--p-dim);white-space:nowrap;width:1%}
+
+/* prompt */
+.prompt{display:flex;gap:.5rem;align-items:baseline;margin-top:1.4rem;
+  border-top:1px solid var(--p-dim);padding-top:1rem}
+.prompt label{white-space:nowrap}
+.prompt input{
+  flex:1;background:transparent;border:0;color:var(--p);font:inherit;
+  text-shadow:inherit;outline:none;min-height:44px
+}
+.prompt input:focus-visible{outline:1px dashed var(--p-dim);outline-offset:4px}
+
+.cmds{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
+.cmds button{
+  background:transparent;border:1px solid var(--p-dim);color:var(--p);
+  font:inherit;font-size:.78rem;padding:.5rem .8rem;min-height:44px;cursor:pointer;
+  text-shadow:inherit
+}
+.cmds button:hover{background:var(--p);color:var(--bg);text-shadow:none}
+.cmds button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+#out .line{margin-bottom:.1rem}
+canvas{display:block;width:100%;height:190px;margin:.6rem 0;opacity:.92}
+
+@media (prefers-reduced-motion:reduce){
+  .flicker{animation:none}
+  .cursor{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="scan" aria-hidden="true"></div>
+<div class="flicker" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="screen">
+  <pre class="logo" aria-label="QBIT.SYS">
+ ██████╗ ██████╗ ██╗████████╗   ███████╗██╗   ██╗███████╗
+██╔═══██╗██╔══██╗██║╚══██╔══╝   ██╔════╝╚██╗ ██╔╝██╔════╝
+██║   ██║██████╔╝██║   ██║      ███████╗ ╚████╔╝ ███████╗
+██║▄▄ ██║██╔══██╗██║   ██║      ╚════██║  ╚██╔╝  ╚════██║
+╚██████╔╝██████╔╝██║   ██║   ██╗███████║   ██║   ███████║
+ ╚══▀▀═╝ ╚═════╝ ╚═╝   ╚═╝   ╚═╝╚══════╝   ╚═╝   ╚══════╝</pre>
+
+  <div id="boot" aria-live="polite"></div>
+
+  <div id="body" hidden>
+    <div class="box">
+      <h2>ABOUT</h2>
+      <p class="line">QBIT.SYS is a cryptography practice operating out of Guildford.
+        We read what your servers actually negotiate and tell you what
+        survives contact with a quantum computer.</p>
+      <canvas id="bloch" aria-label="Rotating wireframe Bloch sphere"></canvas>
+      <p class="line dim">FIG.1 — BLOCH SPHERE / STATE VECTOR / RENDER: WIREFRAME</p>
+    </div>
+
+    <div class="box">
+      <h2>SERVICES</h2>
+      <table>
+        <tr><td>01</td><td>EXTERNAL SCAN <span class="dim">— certificates, TLS, PQC probe. FREE.</span></td></tr>
+        <tr><td>02</td><td>READINESS ASSESSMENT <span class="dim">— internal estate, CBOM, board briefing.</span></td></tr>
+        <tr><td>03</td><td>MIGRATION PROGRAMME <span class="dim">— hybrid ML-KEM rollout, crypto-agility.</span></td></tr>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2>STATUS</h2>
+      <table>
+        <tr><td>NCSC_DISCOVERY</td><td class="amber">DUE 2028</td></tr>
+        <tr><td>NCSC_PRIORITY</td><td class="amber">DUE 2031</td></tr>
+        <tr><td>NCSC_COMPLETE</td><td class="amber">DUE 2035</td></tr>
+        <tr><td>RSA_2048</td><td>112 BITS CLASSICAL / <span class="amber">0 BITS QUANTUM</span></td></tr>
+        <tr><td>ML_KEM_768</td><td>QUANTUM SAFE — FIPS 203</td></tr>
+      </table>
+    </div>
+
+    <div id="out" aria-live="polite"></div>
+
+    <form class="prompt" id="form" autocomplete="off">
+      <label for="cmd">qbit@surrey:~$</label>
+      <input id="cmd" name="cmd" aria-label="Type a command" spellcheck="false">
+    </form>
+
+    <div class="cmds">
+      <button type="button" data-cmd="help">help</button>
+      <button type="button" data-cmd="scan">scan</button>
+      <button type="button" data-cmd="mosca">mosca</button>
+      <button type="button" data-cmd="contact">contact</button>
+      <button type="button" data-cmd="clear">clear</button>
+      <button type="button" data-cmd="exit">exit</button>
+    </div>
+  </div>
+</div>
+
+<script src="q3d.js"></script>
+<script>
+(function () {
+  var reduce = Q3D.reducedMotion;
+  var boot = document.getElementById("boot");
+  var body = document.getElementById("body");
+  var out = document.getElementById("out");
+
+  var BOOT = [
+    "QBIT.SYS BIOS v2.6.1 — 64K RAM OK",
+    "DETECTING CRYPTOGRAPHIC HARDWARE ............ OK",
+    "LOADING LATTICE MODULE (ML-KEM-768) ......... OK",
+    "LOADING SIGNATURE MODULE (ML-DSA-65) ........ OK",
+    "PROBING TLS STACK ........................... OK",
+    "CHECKING QUANTUM THREAT HORIZON ............. 2035",
+    "WARNING: 4 CLASSICAL ALGORITHMS STILL ACTIVE",
+    "READY.",
+    ""
+  ];
+
+  function line(text, cls) {
+    var el = document.createElement("div");
+    el.className = "line" + (cls ? " " + cls : "");
+    el.textContent = text;
+    return el;
+  }
+
+  function finish() {
+    body.hidden = false;
+    new Q3D.Scene(document.getElementById("bloch"), {
+      shape: Q3D.sphere(1, 9, 18),
+      stroke: "#33ff77", nodeColour: "#ffb000", nodeSize: 1.4,
+      lineWidth: 1, scale: 0.86, speed: 0.85
+    }).start().track();
+  }
+
+  if (reduce) {
+    BOOT.forEach(function (t) { boot.appendChild(line(t, t.indexOf("WARNING") === 0 ? "amber" : "dim")); });
+    finish();
+  } else {
+    var i = 0;
+    (function next() {
+      if (i >= BOOT.length) {
+        var p = line("", ""); p.innerHTML = '<span class="cursor"></span>';
+        boot.appendChild(p);
+        finish();
+        return;
+      }
+      boot.appendChild(line(BOOT[i], BOOT[i].indexOf("WARNING") === 0 ? "amber" : "dim"));
+      i++;
+      setTimeout(next, 130 + Math.random() * 110);
+    })();
+  }
+
+  var COMMANDS = {
+    help: ["AVAILABLE COMMANDS:",
+           "  scan <domain>   run an external readiness scan",
+           "  mosca X Y       compute X + Y > Z for your data",
+           "  services        list engagements",
+           "  contact         how to reach us",
+           "  clear           wipe the output buffer",
+           "  exit            return to the lab"],
+    services: ["01 EXTERNAL SCAN — free, same day",
+               "02 READINESS ASSESSMENT — 2-4 weeks, fixed fee",
+               "03 MIGRATION PROGRAMME — retained"],
+    contact: ["SETSQUARED SURREY / SURREY TECHNOLOGY CENTRE",
+              "40 OCCAM ROAD, GUILDFORD, GU2 7YG",
+              "CHANNEL: see the lab index for live links"]
+  };
+
+  function run(raw) {
+    var input = raw.trim();
+    if (!input) return;
+    out.appendChild(line("qbit@surrey:~$ " + input, "amber"));
+
+    var parts = input.split(/\s+/), cmd = parts[0].toLowerCase();
+
+    if (cmd === "clear") { out.innerHTML = ""; return; }
+    if (cmd === "exit") { window.location.href = "../index.html"; return; }
+
+    if (cmd === "scan") {
+      var target = parts[1] || "example.co.uk";
+      ["SCANNING " + target.toUpperCase() + " ...",
+       "  CERTIFICATE ...... RSA-2048 / SHA-256",
+       "  TLS .............. 1.2, 1.3",
+       "  KEY EXCHANGE ..... X25519, SECP256R1",
+       "  PQC HYBRID ....... NOT OFFERED",
+       "  VERDICT .......... EXPOSED — HARVEST NOW, DECRYPT LATER",
+       "(demonstration output — the real scanner lives in the repository)"
+      ].forEach(function (t) { out.appendChild(line(t, t.indexOf("  VERDICT") === 0 ? "amber" : "")); });
+      return;
+    }
+
+    if (cmd === "mosca") {
+      var x = parseInt(parts[1], 10), y = parseInt(parts[2], 10);
+      if (isNaN(x) || isNaN(y)) { out.appendChild(line("USAGE: mosca <shelf-life-years> <migration-years>", "dim")); return; }
+      var now = new Date(), z = 2035 - (now.getFullYear() + now.getMonth() / 12);
+      var total = x + y, risk = total > z;
+      out.appendChild(line("X(" + x + ") + Y(" + y + ") = " + total + (risk ? " > " : " <= ") + "Z(" + z.toFixed(1) + ")"));
+      out.appendChild(line(risk ? "VERDICT: EXPOSED" : "VERDICT: WITHIN TOLERANCE", "amber"));
+      return;
+    }
+
+    if (COMMANDS[cmd]) { COMMANDS[cmd].forEach(function (t) { out.appendChild(line(t)); }); return; }
+    out.appendChild(line("COMMAND NOT FOUND: " + cmd + " — TYPE 'help'", "amber"));
+  }
+
+  document.getElementById("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var field = document.getElementById("cmd");
+    run(field.value);
+    field.value = "";
+    field.scrollIntoView({ block: "nearest" });
+  });
+
+  document.querySelectorAll(".cmds button").forEach(function (b) {
+    b.addEventListener("click", function () { run(b.getAttribute("data-cmd")); });
+  });
+})();
+</script>
+</body>
+</html>

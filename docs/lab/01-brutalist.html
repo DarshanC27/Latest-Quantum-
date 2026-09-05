@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DECOHERENCE — brutalist rave poster</title>
+<style>
+/* 01 — BRUTALIST RAVE POSTER
+   Acid green on black. Everything squared off, everything shouting.
+   The only rule obeyed: nothing is rounded, nothing is centred politely. */
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0!important}
+:root{--acid:#c3ff00;--ink:#000;--paper:#fff;--grid:2px}
+html{background:var(--ink)}
+body{
+  background:var(--ink);color:var(--acid);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  overflow-x:hidden;text-transform:uppercase;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--acid);color:var(--ink)}
+
+/* --- ticker --- */
+.ticker{
+  border-block:var(--grid) solid var(--acid);
+  overflow:hidden;white-space:nowrap;padding:.35rem 0;
+  font-weight:700;font-size:clamp(.7rem,1.4vw,1rem);letter-spacing:.22em;
+}
+.ticker span{display:inline-block;animation:slide 22s linear infinite}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* --- hard grid --- */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);border-left:var(--grid) solid var(--acid)}
+.cell{border-right:var(--grid) solid var(--acid);border-bottom:var(--grid) solid var(--acid);padding:1.1rem}
+
+/* --- oversized type that bleeds --- */
+.bleed{
+  font-size:clamp(5rem,23vw,20rem);font-weight:900;line-height:.72;
+  letter-spacing:-.05em;margin-left:-.06em;white-space:nowrap;
+  transform:scaleY(1.45);transform-origin:left top;
+}
+.bleed.stretch{transform:scaleY(1.9) scaleX(.86)}
+.outline{color:transparent;-webkit-text-stroke:3px var(--acid)}
+.invert{background:var(--acid);color:var(--ink)}
+
+/* --- halftone --- */
+.halftone{
+  position:relative;filter:grayscale(1) contrast(2.6) brightness(.75);
+  mix-blend-mode:screen;
+}
+.halftone::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--ink) 1.1px,transparent 1.2px);
+  background-size:4px 4px;mix-blend-mode:multiply;opacity:.9;
+}
+canvas{display:block;width:100%;height:100%}
+
+.slab{font-size:clamp(.65rem,1.1vw,.82rem);letter-spacing:.2em;line-height:1.55;font-weight:700}
+.big{font-size:clamp(2rem,6vw,5rem);font-weight:900;line-height:.86;letter-spacing:-.03em}
+.rot{writing-mode:vertical-rl;transform:rotate(180deg)}
+.lineup li{list-style:none;border-bottom:var(--grid) solid var(--acid);padding:.5rem 0;
+  display:flex;justify-content:space-between;gap:1rem;font-weight:700;font-size:clamp(.8rem,2.4vw,1.6rem)}
+.lineup li:hover{background:var(--acid);color:var(--ink)}
+
+.btn{display:inline-block;border:var(--grid) solid var(--acid);padding:.85rem 1.4rem;
+  font-weight:900;letter-spacing:.14em;min-height:48px}
+.btn:hover{background:var(--acid);color:var(--ink)}
+.btn:focus-visible{outline:4px solid var(--paper);outline-offset:3px}
+
+.glitchpad{animation:jolt 7s steps(1) infinite}
+@keyframes jolt{0%,96%{transform:none}97%{transform:translate(-5px,2px)}98%{transform:translate(4px,-3px)}99%{transform:translate(-2px,1px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .ticker span{animation:none}
+  .glitchpad{animation:none}
+}
+@media (max-width:760px){
+  .grid{grid-template-columns:repeat(4,1fr)}
+  .span-mobile-4{grid-column:span 4!important}
+}
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true"><span>
+  ★ DECOHERENCE 006 ★ SUPERPOSITION EP ★ OUT NOW ★ NO REFUNDS ★ 140BPM ★ WAREHOUSE 9 GUILDFORD ★
+  ★ DECOHERENCE 006 ★ SUPERPOSITION EP ★ OUT NOW ★ NO REFUNDS ★ 140BPM ★ WAREHOUSE 9 GUILDFORD ★
+</span></div>
+
+<div class="grid">
+  <div class="cell" style="grid-column:span 12;overflow:hidden;padding-bottom:3.5rem">
+    <div class="slab" style="margin-bottom:1.2rem">EST. 2026 / SURREY / CAT.NO DCH-006</div>
+    <div class="bleed glitchpad">DECO</div>
+    <div class="bleed stretch outline">HERENCE</div>
+  </div>
+
+  <div class="cell span-mobile-4" style="grid-column:span 5;min-height:340px;background:#050505;padding:0">
+    <canvas id="art" aria-label="Rotating wireframe qubit lattice"></canvas>
+  </div>
+
+  <div class="cell span-mobile-4" style="grid-column:span 4">
+    <div class="big">STATE<br>COLLAPSE</div>
+    <p class="slab" style="margin-top:1rem">
+      Six tracks recorded inside a dilution refrigerator at 15 millikelvin.
+      Every measurement destroyed the take. What survives is what was
+      never observed.
+    </p>
+    <a class="btn" href="#lineup" style="margin-top:1.4rem">HEAR IT →</a>
+  </div>
+
+  <div class="cell span-mobile-4 invert" style="grid-column:span 3">
+    <div class="slab" style="color:var(--ink)">RUNTIME</div>
+    <div class="big" style="color:var(--ink)">41:07</div>
+    <div class="slab" style="color:var(--ink);margin-top:1rem">
+      FORMAT — 12" / DIGITAL<br>PRESS — 300 COPIES<br>MASTERED — ABBEY RD
+    </div>
+  </div>
+
+  <div class="cell" style="grid-column:span 1;display:grid;place-items:center">
+    <div class="rot slab">A-SIDE</div>
+  </div>
+
+  <div class="cell span-mobile-4" id="lineup" style="grid-column:span 7">
+    <div class="slab" style="margin-bottom:.9rem">TRACKLIST</div>
+    <ul class="lineup">
+      <li><span>A1 SUPERPOSITION</span><span>07:12</span></li>
+      <li><span>A2 SHOR'S THEOREM</span><span>06:44</span></li>
+      <li><span>A3 NO-CLONING</span><span>08:01</span></li>
+      <li><span>B1 ENTANGLED (RMX)</span><span>05:58</span></li>
+      <li><span>B2 HARVEST NOW</span><span>06:30</span></li>
+      <li><span>B3 DECRYPT LATER</span><span>06:42</span></li>
+    </ul>
+  </div>
+
+  <div class="cell span-mobile-4 halftone" style="grid-column:span 4;min-height:260px;padding:0;background:#111">
+    <canvas id="noise" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="cell span-mobile-4" style="grid-column:span 12;text-align:center;padding:2.6rem 1rem">
+    <div class="bleed" style="white-space:normal;transform:scaleY(1.3);font-size:clamp(2.4rem,9vw,7rem)">NO ENCORE</div>
+    <a class="btn" href="../index.html" style="margin-top:1.6rem">← BACK TO LAB</a>
+  </div>
+</div>
+
+<div class="ticker" aria-hidden="true"><span>
+  ★ TICKETS £12 ADV ★ 23:00–06:00 ★ NO PHONES ON THE FLOOR ★ STRICTLY 18+ ★
+  ★ TICKETS £12 ADV ★ 23:00–06:00 ★ NO PHONES ON THE FLOOR ★ STRICTLY 18+ ★
+</span></div>
+
+<script src="q3d.js"></script>
+<script>
+// Wireframe qubit lattice — deliberately jagged, low-res, ugly on purpose.
+new Q3D.Scene(document.getElementById("art"), {
+  shape: Q3D.cubeLattice(4, 1.7),
+  stroke: "#c3ff00", nodeColour: "#c3ff00", nodeSize: 2.4,
+  lineWidth: 1.5, scale: 1.05, speed: 1.4
+}).start().track();
+
+// Static-noise field behind the halftone screen.
+(function () {
+  var c = document.getElementById("noise"), ctx = c.getContext("2d");
+  function paint() {
+    var r = c.getBoundingClientRect();
+    c.width = Math.max(1, r.width >> 1); c.height = Math.max(1, r.height >> 1);
+    var img = ctx.createImageData(c.width, c.height), d = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var v = Math.random() * 255;
+      d[i] = v * 0.76; d[i + 1] = v; d[i + 2] = v * 0.1; d[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  paint();
+  if (!Q3D.reducedMotion) setInterval(paint, 90);
+  window.addEventListener("resize", paint);
+})();
+</script>
+</body>
+</html>
